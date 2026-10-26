@@ -1,0 +1,13 @@
+services:
+  trim-site:
+    build: .
+    ports:
+      # "8080:80"  -> http://IP-DE-TON-SERVEUR:8080
+      # Pour servir sur le port 80 (site principal) : remplace par "80:80"
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
