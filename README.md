@@ -34,14 +34,22 @@ window.PROFILE_CONFIG = {
   avatar: 'assets/avatar.svg',
   music: '',
   musicTitle: '',
+  icons: {
+    settings: 'assets/settings.svg',
+    profile: 'assets/profile.svg',
+    network: 'assets/network.svg',
+    audio: 'assets/audio.svg',
+  },
   links: [
     {
       name: 'GitHub',
+      icon: 'github',
       label: '@ton-pseudo',
       url: 'https://github.com/ton-pseudo',
     },
     {
       name: 'Discord',
+      icon: 'discord',
       label: 'Mon serveur',
       url: 'https://discord.gg/ton-invitation',
     },
@@ -59,6 +67,7 @@ de cet exemple sont à remplacer par les tiens.
 | `avatar` | Le chemin de ta photo. Garde `assets/avatar.svg` pour utiliser l’avatar fourni. |
 | `music` | Le chemin du fichier audio. Garde `''` pour laisser la musique désactivée. |
 | `musicTitle` | Le titre affiché dans les réglages audio. |
+| `icons` | Les images des boutons Profil, Réseaux, Audio et de l’en-tête. Voir la section Icônes ci-dessous. |
 | `links` | Les liens affichés dans Réseaux. Garde `[]` si tu n’en veux aucun. |
 
 Pour chaque réseau, `name` est son nom, `label` est le texte affiché dessous et
@@ -117,6 +126,71 @@ ces réglages et la musique continue quand tu changes de menu.
 Ajoute uniquement des médias que tu as le droit de publier. Ce dépôt fournit
 un avatar et des icônes SVG génériques. La photo de Trim, la musique et les
 icônes officielles Nintendo de son site personnel ne sont pas incluses.
+
+## Changer les icônes
+
+Les icônes nécessaires au modèle sont déjà fournies. Tu peux garder celles-ci,
+utiliser les logos intégrés pour les réseaux, ou ajouter tes propres images.
+Il n’y a aucun pack d’icônes à installer.
+
+### Boutons Profil, Réseaux, Audio et en-tête
+
+Ajoute ton image PNG, JPG ou SVG dans `assets`, puis change son chemin dans le
+bloc `icons` de `config.js`. Par exemple, après avoir ajouté `mon-profil.png` :
+
+```js
+icons: {
+  settings: 'assets/settings.svg',
+  profile: 'assets/mon-profil.png',
+  network: 'assets/network.svg',
+  audio: 'assets/audio.svg',
+},
+```
+
+Ce bloc remplace le bloc `icons` à l’intérieur de `window.PROFILE_CONFIG`.
+`settings` change l’image de l’en-tête et le favicon, `profile` le bouton Profil,
+`network` le bouton Réseaux et `audio` le bouton Réglages audio.
+Si tu omets le bloc ou un de ses champs, l’icône fournie correspondante est utilisée.
+
+Les images gardent leurs couleurs et leurs proportions. Un PNG transparent
+permet d’éviter un rectangle de fond, mais une image JPG fonctionne aussi.
+Un fichier absent ou illisible déclenche un message et un retour à l’icône
+fournie, si celle-ci est toujours présente.
+
+### Logos des réseaux sociaux
+
+Dans chaque élément de `links`, ajoute `icon`. Pour un logo intégré, utilise
+`tiktok`, `x` (ou `twitter`), `github`, `youtube` ou `discord`. Par exemple :
+
+```js
+{
+  name: 'GitHub',
+  icon: 'github',
+  label: '@ton-pseudo',
+  url: 'https://github.com/ton-pseudo',
+},
+```
+
+Ces noms utilisent les SVG intégrés à la page, sans téléchargement supplémentaire.
+Pour ton propre logo, ajoute d’abord son fichier dans `assets`, puis remplace
+`icon: 'github'` par, par exemple, `icon: 'assets/mon-logo.png'`.
+Le nom affiché et le logo sont indépendants : tu peux garder le libellé de ton choix.
+Sans icône reconnue, un globe est utilisé.
+
+### Si une icône ne s’affiche pas
+
+- Garde l’extension réelle : renommer `logo.png` en `logo.svg` ne convertit pas l’image.
+- Écris le chemin exact, majuscules comprises : `assets/Logo.png` et `assets/logo.png` peuvent désigner deux fichiers différents.
+- Sur GitHub Pages, utilise `assets/logo.png`, sans `/` au début, pour rester dans le sous-dossier de ton site.
+- Pour une image externe, utilise l’URL du fichier lui-même, accessible publiquement, et non une page de prévisualisation.
+- Ouvre le fichier dans le dossier `assets` sur GitHub pour vérifier qu’il a bien été ajouté, puis attends la nouvelle publication et recharge le site.
+
+Si tu utilises une ancienne copie du modèle, elle ne récupère pas automatiquement
+les modifications de ce dépôt. Sauvegarde ta configuration et tes médias, puis
+récupère ensemble les nouvelles versions de `index.html`, `style.css`, `script.js`
+et des SVG fournis dans `assets`. Conserve tes médias et ton `config.js` personnel ;
+tu peux y ajouter le bloc `icons` ci-dessus. Évite de mélanger l’ancien HTML
+avec la nouvelle feuille de style ou l’inverse.
 
 ## Tester sur ton PC avant de publier (facultatif)
 

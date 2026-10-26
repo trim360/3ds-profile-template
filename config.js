@@ -5,5 +5,11 @@ window.PROFILE_CONFIG = {
   avatar: 'assets/avatar.svg',
   music: '',
   musicTitle: '',
+  icons: {
+    settings: 'assets/settings.svg',
+    profile: 'assets/profile.svg',
+    network: 'assets/network.svg',
+    audio: 'assets/audio.svg',
+  },
   links: [],
 };

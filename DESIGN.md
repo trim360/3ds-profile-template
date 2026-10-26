@@ -15,3 +15,9 @@ sans image générée, portrait personnel, texture ou musique Nintendo. Le portr
 par défaut et les textes « Votre pseudo » sont des exemples explicitement
 personnalisables dans config.js. Les listes vides et la musique absente disposent
 d’un état explicite. Le crédit de Trim reste accessible par un volet dédié.
+
+Les icônes de menu sont des images configurables, sans masque CSS, pour conserver
+les couleurs et les proportions des fichiers PNG, JPG ou SVG fournis par l’auteur
+du site. Les réseaux acceptent leurs logos intégrés ou une image personnelle.
+Un fichier d’icône indisponible utilise l’image de secours fournie et affiche un
+message. Les libellés des menus restent visibles indépendamment des images.

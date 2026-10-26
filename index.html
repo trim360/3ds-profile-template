@@ -8,9 +8,9 @@
   <meta name="theme-color" content="#f2f0cf">
   <title>Profil · Menu principal</title>
   <link rel="icon" type="image/svg+xml" href="assets/settings.svg">
-  <link rel="stylesheet" href="style.css?v=3ds-3">
+  <link rel="stylesheet" href="style.css?v=icons-1">
   <script src="config.js" defer></script>
-  <script src="script.js?v=3ds-1" defer></script>
+  <script src="script.js?v=icons-1" defer></script>
 </head>
 <body>
   <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -35,20 +35,20 @@
     </header>
     <div class="settings-window">
       <header class="console-heading">
-        <img class="heading-wrench" src="assets/settings.svg" alt="" width="64" height="64">
+        <img class="heading-wrench" data-menu-icon="settings" src="assets/settings.svg" alt="" width="64" height="64">
         <h1>Paramètres de <span data-profile-name>Votre pseudo</span></h1>
       </header>
       <main id="contenu" tabindex="-1">
         <section class="page home-page" id="accueil" aria-labelledby="home-title">
           <div class="page-heading"><h2 id="home-title" tabindex="-1">Menu principal</h2><span>Choisis une catégorie.</span></div>
           <nav class="menu-grid" aria-label="Catégories">
-            <a class="menu-button profile-menu" href="#profil"><span class="menu-icon-plate" aria-hidden="true"><span class="original-icon profile-icon"></span></span><span>Profil</span></a>
-            <a class="menu-button network-menu" href="#reseaux"><span class="menu-icon-plate" aria-hidden="true"><span class="original-icon network-icon"></span></span><span>Réseaux</span></a>
-            <a class="menu-button audio-menu" href="#audio"><span class="audio-icon-plate" aria-hidden="true"><svg><use href="#icon-speaker"/></svg></span><span>Réglages<br> audio</span></a>
+            <a class="menu-button profile-menu" href="#profil"><span class="menu-icon-plate" aria-hidden="true"><img class="menu-icon" data-menu-icon="profile" src="assets/profile.svg" alt="" width="48" height="48"></span><span>Profil</span></a>
+            <a class="menu-button network-menu" href="#reseaux"><span class="menu-icon-plate" aria-hidden="true"><img class="menu-icon" data-menu-icon="network" src="assets/network.svg" alt="" width="48" height="48"></span><span>Réseaux</span></a>
+            <a class="menu-button audio-menu" href="#audio"><span class="menu-icon-plate" aria-hidden="true"><img class="menu-icon" data-menu-icon="audio" src="assets/audio.svg" alt="" width="48" height="48"></span><span>Réglages<br> audio</span></a>
           </nav>
         </section>
         <section class="page" id="profil" aria-labelledby="profile-title" hidden>
-          <div class="page-heading"><h2 id="profile-title" tabindex="-1">Profil</h2><span class="original-icon profile-icon section-icon" aria-hidden="true"></span></div>
+          <div class="page-heading"><h2 id="profile-title" tabindex="-1">Profil</h2><img class="section-icon" data-menu-icon="profile" src="assets/profile.svg" alt="" width="34" height="34"></div>
           <div class="profile-content">
             <div class="portrait-frame"><img src="assets/avatar.svg" alt="Avatar" width="256" height="256" loading="lazy" decoding="async" id="profile-image"><p class="image-error" hidden>La photo de profil n’a pas pu être chargée.</p></div>
             <div class="profile-details"><span class="field-label">Nom d’affichage</span><h3 data-profile-name>Votre pseudo</h3><a class="small-button" href="#reseaux">Voir les réseaux<svg aria-hidden="true"><use href="#icon-network"/></svg></a><p class="visit-count" id="visitor-count"></p></div>
@@ -78,6 +78,7 @@
         <div class="sound-controls"><p id="music-status" role="status">Musique au premier clic</p><button id="audio-toggle" data-audio-control aria-label="Désactiver la musique" aria-pressed="true"><svg aria-hidden="true"><use href="#icon-speaker"/></svg><span id="audio-toggle-label">Son activé</span><span class="sound-dot" aria-hidden="true"></span></button></div>
       </footer>
     </div>
+    <p class="storage-note" id="asset-status" role="status" hidden></p>
     <details class="credits">
       <summary>Crédits : Trim</summary>
       <p>Thème créé par <a href="https://kirbytrim.buzz/" target="_blank" rel="noopener noreferrer">Trim</a>. Copyright © 2026 Trim.</p>

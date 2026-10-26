@@ -11,6 +11,28 @@ function safeUrl(value) {
   } catch { return ''; }
 }
 document.querySelectorAll('[data-profile-name]').forEach((element) => { element.textContent = profileName; });
+const defaultIcons = { settings: 'assets/settings.svg', profile: 'assets/profile.svg', network: 'assets/network.svg', audio: 'assets/audio.svg' };
+const icons = config.icons && typeof config.icons === 'object' ? config.icons : {};
+const favicon = document.querySelector('link[rel="icon"]');
+function setIconImage(image, source, fallback) {
+  const fallbackUrl = safeUrl(fallback);
+  image.addEventListener('error', () => {
+    $('asset-status').hidden = false;
+    $('asset-status').textContent = 'Une icône n’a pas pu être chargée. L’icône par défaut est utilisée si elle est disponible.';
+    if (image.src !== fallbackUrl) image.src = fallbackUrl;
+    else image.hidden = true;
+    if (image.dataset.menuIcon === 'settings') favicon.href = fallbackUrl;
+  });
+  image.src = safeUrl(source) || fallbackUrl;
+}
+for (const image of document.querySelectorAll('[data-menu-icon]')) {
+  const key = image.dataset.menuIcon;
+  setIconImage(image, icons[key], defaultIcons[key]);
+  if (key === 'settings') {
+    favicon.removeAttribute('type');
+    favicon.href = image.src;
+  }
+}
 $('site-domain').textContent = String(config.domain || 'Site personnel');
 $('profile-image').src = safeUrl(config.avatar) || 'assets/avatar.svg';
 $('profile-image').alt = `Avatar de ${profileName}`;
@@ -28,6 +50,23 @@ for (const link of Array.isArray(config.links) ? config.links : []) {
   anchor.href = url;
   anchor.target = '_blank';
   anchor.rel = 'noopener noreferrer';
+  const iconName = String(link.icon || link.name || '').toLowerCase();
+  const preset = iconName === 'twitter' ? 'x' : iconName;
+  const presetId = ['tiktok', 'x', 'github', 'youtube', 'discord'].includes(preset) ? preset : 'network';
+  let icon;
+  if (presetId !== 'network' || !safeUrl(link.icon)) {
+    icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', `#icon-${presetId}`);
+    icon.append(use);
+  } else {
+    icon = document.createElement('img');
+    icon.alt = '';
+    setIconImage(icon, link.icon, defaultIcons.network);
+  }
+  icon.setAttribute('class', 'social-icon');
+  icon.setAttribute('aria-hidden', 'true');
+  anchor.append(icon);
   const text = document.createElement('span');
   const title = document.createElement('strong');
   title.textContent = String(link.name || new URL(url).hostname);
