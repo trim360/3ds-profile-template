@@ -7,10 +7,10 @@
   <meta name="description" content="Un profil personnel dans un menu inspiré des consoles portables.">
   <meta name="theme-color" content="#f2f0cf">
   <title>Profil · Menu principal</title>
-  <link rel="icon" type="image/svg+xml" href="assets/settings.svg">
-  <link rel="stylesheet" href="style.css?v=icons-1">
+  <link rel="icon" type="image/png" href="assets/settings-3ds.png">
+  <link rel="stylesheet" href="style.css?v=1.2.0">
   <script src="config.js" defer></script>
-  <script src="script.js?v=icons-1" defer></script>
+  <script type="module" src="script.js?v=1.2.0"></script>
 </head>
 <body>
   <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -27,20 +27,20 @@
       <symbol id="icon-discord" viewBox="0 0 24 24"><path fill="currentColor" d="M20.32 4.37a19.8 19.8 0 0 0-4.89-1.52c-.21.38-.44.87-.6 1.25a18.3 18.3 0 0 0-5.5 0c-.17-.39-.4-.87-.61-1.25a19.7 19.7 0 0 0-4.88 1.52A20.3 20.3 0 0 0 .1 18.06a19.9 19.9 0 0 0 6 3.03c.46-.63.87-1.3 1.23-2a13.1 13.1 0 0 1-1.87-.9l.37-.29a14.2 14.2 0 0 0 12.06 0l.37.3a12.3 12.3 0 0 1-1.87.89c.36.7.78 1.37 1.23 2a19.8 19.8 0 0 0 6.03-3.03c.5-5.18-.84-9.68-3.55-13.66zM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42s.96-2.42 2.16-2.42 2.18 1.1 2.16 2.42c0 1.34-.96 2.42-2.16 2.42zm7.97 0c-1.18 0-2.16-1.08-2.16-2.42s.95-2.42 2.16-2.42 2.18 1.1 2.16 2.42c0 1.34-.95 2.42-2.16 2.42z"/></symbol>
     </defs>
   </svg>
-  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <a class="skip-link" href="#contenu" data-i18n="skip">Aller au contenu</a>
   <div class="site-shell">
     <header class="status-bar">
       <span class="domain"><svg aria-hidden="true"><use href="#icon-network"/></svg><span id="site-domain">Site personnel</span></span>
-      <span>Site personnel</span>
+      <span data-i18n="personalSite">Site personnel</span>
     </header>
     <div class="settings-window">
       <header class="console-heading">
-        <img class="heading-wrench" data-menu-icon="settings" src="assets/settings.svg" alt="" width="64" height="64">
-        <h1>Paramètres de <span data-profile-name>Votre pseudo</span></h1>
+        <img class="heading-wrench" data-menu-icon="settings" src="assets/settings-3ds.png" alt="" width="64" height="64">
+        <h1 id="site-title">Paramètres de <span data-profile-name>Votre pseudo</span></h1>
       </header>
       <main id="contenu" tabindex="-1">
         <section class="page home-page" id="accueil" aria-labelledby="home-title">
-          <div class="page-heading"><h2 id="home-title" tabindex="-1">Menu principal</h2><span>Choisis une catégorie.</span></div>
+          <div class="page-heading"><h2 id="home-title" tabindex="-1" data-i18n="home">Menu principal</h2><span data-i18n="choose">Choisis une catégorie.</span></div>
           <nav class="menu-grid" aria-label="Catégories">
             <a class="menu-button profile-menu" href="#profil"><span class="menu-icon-plate" aria-hidden="true"><img class="menu-icon" data-menu-icon="profile" src="assets/profile.svg" alt="" width="48" height="48"></span><span>Profil</span></a>
             <a class="menu-button network-menu" href="#reseaux"><span class="menu-icon-plate" aria-hidden="true"><img class="menu-icon" data-menu-icon="network" src="assets/network.svg" alt="" width="48" height="48"></span><span>Réseaux</span></a>
@@ -49,41 +49,51 @@
         </section>
         <section class="page" id="profil" aria-labelledby="profile-title" hidden>
           <div class="page-heading"><h2 id="profile-title" tabindex="-1">Profil</h2><img class="section-icon" data-menu-icon="profile" src="assets/profile.svg" alt="" width="34" height="34"></div>
+          <img id="profile-cover" class="profile-cover" alt="" hidden>
           <div class="profile-content">
-            <div class="portrait-frame"><img src="assets/avatar.svg" alt="Avatar" width="256" height="256" loading="lazy" decoding="async" id="profile-image"><p class="image-error" hidden>La photo de profil n’a pas pu être chargée.</p></div>
-            <div class="profile-details"><span class="field-label">Nom d’affichage</span><h3 data-profile-name>Votre pseudo</h3><a class="small-button" href="#reseaux">Voir les réseaux<svg aria-hidden="true"><use href="#icon-network"/></svg></a><p class="visit-count" id="visitor-count"></p></div>
+            <div class="portrait-frame"><img src="assets/avatar.svg" alt="Avatar" width="256" height="256" loading="lazy" decoding="async" id="profile-image"><p class="image-error" data-i18n="imageError" hidden>La photo de profil n’a pas pu être chargée.</p></div>
+            <div class="profile-details"><span class="field-label" data-i18n="displayName">Nom d’affichage</span><h3 data-profile-name>Votre pseudo</h3><p class="field-label" id="profile-pronouns" hidden></p><a class="small-button" href="#reseaux" id="view-networks"><span data-i18n="viewLinks">Voir les réseaux</span><svg aria-hidden="true"><use href="#icon-network"/></svg></a><p class="visit-count" id="visitor-count"></p></div>
           </div>
+          <div id="profile-extra" hidden></div>
         </section>
         <section class="page" id="reseaux" aria-labelledby="networks-title" hidden>
-          <div class="page-heading"><h2 id="networks-title" tabindex="-1">Réseaux</h2><span>Liens du profil</span></div>
+          <div class="page-heading"><h2 id="networks-title" tabindex="-1">Réseaux</h2><span data-i18n="profileLinks">Liens du profil</span></div>
           <ul class="social-list" id="social-links"></ul>
           <p class="list-note" id="links-note">Aucun réseau configuré. Ajoute tes liens dans config.js.</p>
-          <button class="copy-button" id="copy-discord" hidden>Copier le lien Discord</button>
+          <button class="copy-button" id="copy-discord" data-i18n="copyDiscord" hidden>Copier le lien Discord</button>
         </section>
         <section class="page" id="audio" aria-labelledby="audio-title" hidden>
           <div class="page-heading"><h2 id="audio-title" tabindex="-1">Réglages audio</h2><svg class="section-icon audio-color" aria-hidden="true"><use href="#icon-speaker"/></svg></div>
           <div class="audio-content">
-            <div class="audio-source"><svg aria-hidden="true"><use href="#icon-speaker"/></svg><div><h3>Musique de fond</h3><p id="music-title">Aucune musique configurée</p></div></div>
-            <label class="audio-setting switch-setting" data-audio-control><span>Musique de fond<span id="enabled-description">Activée</span></span><span class="switch"><input id="music-enabled" type="checkbox" checked aria-label="Activer la musique de fond"><span class="switch-track" aria-hidden="true"></span></span></label>
-            <div class="audio-setting volume-setting" data-audio-control><label for="volume-slider">Volume</label><output id="volume-value" for="volume-slider">25 %</output><div class="volume-range"><span aria-hidden="true">−</span><input id="volume-slider" type="range" min="0" max="100" step="1" value="25"><span aria-hidden="true">+</span></div></div>
+            <div class="audio-source"><svg aria-hidden="true"><use href="#icon-speaker"/></svg><div><h3 data-i18n="backgroundMusic">Musique de fond</h3><p id="music-title">Aucune musique configurée</p></div></div>
+            <label class="audio-setting switch-setting" data-audio-control><span><span data-i18n="backgroundMusic">Musique de fond</span><span id="enabled-description">Activée</span></span><span class="switch"><input id="music-enabled" type="checkbox" checked aria-label="Activer la musique de fond"><span class="switch-track" aria-hidden="true"></span></span></label>
+            <div class="audio-setting volume-setting" data-audio-control><label for="volume-slider" data-i18n="volume">Volume</label><output id="volume-value" for="volume-slider">25 %</output><div class="volume-range"><span aria-hidden="true">−</span><input id="volume-slider" type="range" min="0" max="100" step="1" value="25"><span aria-hidden="true">+</span></div></div>
             <p class="audio-note" id="audio-note">Ajoute un fichier audio autorisé et renseigne son chemin dans config.js.</p>
             <p class="storage-note" id="storage-note">Tes réglages sont enregistrés sur cet appareil.</p>
           </div>
         </section>
       </main>
-      <div class="audio-error" id="audio-error" role="alert" hidden><p id="audio-error-message"></p><button class="small-button" id="retry-audio" data-audio-control>Réessayer le chargement</button></div>
+      <div class="audio-error" id="audio-error" role="alert" hidden><p id="audio-error-message"></p><button class="small-button" id="retry-audio" data-audio-control data-i18n="retry">Réessayer le chargement</button></div>
       <footer class="bottom-bar">
-        <a class="back-button" href="#accueil" id="back-button" hidden><svg aria-hidden="true"><use href="#icon-back"/></svg>Retour</a>
-        <span class="home-indicator" id="home-indicator">Menu principal</span>
+        <a class="back-button" href="#accueil" id="back-button" hidden><svg aria-hidden="true"><use href="#icon-back"/></svg><span data-i18n="back">Retour</span></a>
+        <span class="home-indicator" id="home-indicator" data-i18n="home">Menu principal</span>
         <div class="sound-controls"><p id="music-status" role="status">Musique au premier clic</p><button id="audio-toggle" data-audio-control aria-label="Désactiver la musique" aria-pressed="true"><svg aria-hidden="true"><use href="#icon-speaker"/></svg><span id="audio-toggle-label">Son activé</span><span class="sound-dot" aria-hidden="true"></span></button></div>
       </footer>
     </div>
+    <div class="site-tools">
+      <label class="language-control"><span data-i18n="language">Langue</span><select id="language-select"><option value="en">English</option><option value="fr">Français</option></select></label>
+      <button class="small-button" id="check-updates" data-i18n="checkUpdates">Vérifier les mises à jour</button>
+    </div>
+    <p class="storage-note" id="language-status" role="status" hidden></p>
+    <p class="storage-note" id="update-status" role="status" hidden></p>
+    <aside class="audio-error update-notice" id="update-notice" role="status" hidden><p><span data-i18n="updateAvailable">Une nouvelle mise à jour est disponible !</span><br><span id="update-version"></span></p><a class="small-button" id="view-update" target="_blank" rel="noopener noreferrer" data-i18n="viewUpdate">Voir la mise à jour</a> <button class="small-button" id="dismiss-update" data-i18n="later">Plus tard</button></aside>
     <p class="storage-note" id="asset-status" role="status" hidden></p>
     <details class="credits">
-      <summary>Crédits : Trim</summary>
-      <p>Thème créé par <a href="https://kirbytrim.buzz/" target="_blank" rel="noopener noreferrer">Trim</a>. Copyright © 2026 Trim.</p>
-      <p>Code sous <a href="LICENSE">GNU GPLv3</a> avec <a href="NOTICE">attribution obligatoire</a>. Fourni sans garantie. Tu peux modifier et redistribuer le code selon ces conditions.</p>
-      <p>Notice d’origine : <a href="LICENSES/MIT-original.txt">Copyright © 2025 JAQLIV, licence MIT</a>.</p>
+      <summary data-i18n="credits">Crédits : Trim</summary>
+      <p><span data-i18n="creator">Thème créé par</span> <a href="https://kirbytrim.buzz/" target="_blank" rel="noopener noreferrer">Trim</a>. Copyright © 2026 Trim.</p>
+      <p><span data-i18n="legal">Code sous GNU GPLv3 avec attribution obligatoire. Fourni sans garantie.</span> <a href="LICENSE" data-i18n="license">Licence</a> · <a href="NOTICE" data-i18n="attribution">Conditions d’attribution</a>.</p>
+      <p><span data-i18n="originalNotice">Notice d’origine</span> : <a href="LICENSES/MIT-original.txt">Copyright © 2025 JAQLIV, MIT</a>.</p>
+      <div id="custom-credits"></div>
     </details>
     <p class="clipboard-status" id="clipboard-status" role="status"></p>
   </div>

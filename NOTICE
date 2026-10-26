@@ -1,7 +1,7 @@
 3DS Profile Template
 Copyright (C) 2026 Trim
 
-The code and original SVG assets in this template are licensed under the
+The code and original generic SVG assets in this template are licensed under the
 GNU General Public License, version 3 only. See LICENSE for the full text.
 
 Additional attribution term under GNU GPLv3, section 7(b):
@@ -22,6 +22,15 @@ The original MIT terms remain in LICENSES/MIT-original.txt. No additional
 attribution term is asserted over contributions made solely by JAQLIV.
 
 The design takes inspiration from handheld console settings menus.
-No Nintendo artwork, music, ROMs or personal portrait is included.
+Nintendo-specific visual assets are not covered by the code's GPL license:
+- assets/settings-3ds.png: original 3DS settings wrench supplied by Trim.
+- assets/profile.svg: Nintendo Network logo by Nintendo, icon-only crop of
+  https://commons.wikimedia.org/wiki/File:Nintendo_Network.svg
+  Original vector source: Kid Icarus: Uprising manual. The Commons description
+  labels it PD-textlogo and notes possible trademark restrictions.
+  Colours and vector paths are unchanged; only the framing is cropped.
+  Official colour reference:
+  https://www.nintendo.com/eu/media/images/10_share_images/support_9/H2x1_Support_NintendoNetworkIcon.jpg
+No Nintendo music, ROMs or personal portrait is included.
 Nintendo is not affiliated with this project. Files you add yourself retain
 their own licenses and are not automatically covered by this code license.

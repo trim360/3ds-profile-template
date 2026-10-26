@@ -1,0 +1,10 @@
+{
+  "id":"sona",
+  "type":"sona",
+  "title":"Example Sona",
+  "content":"Example character description. Add your own text and illustrations through Easy Setup.",
+  "traits":[{"label":"Example trait","value":"Your value"}],
+  "images":[],
+  "links":[],
+  "visible":true
+}

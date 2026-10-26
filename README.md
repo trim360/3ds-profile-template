@@ -1,264 +1,353 @@
-# 3DS Profile Template
+# 3DS Personal Website · 1.2.0
 
-Un modèle de site personnel créé par **Trim**, avec une interface inspirée des
-paramètres de la Nintendo 3DS. Tu peux y mettre ton pseudo, ta photo, tes réseaux
-et une musique de fond.
+[English](#english) · [Français](#français)
 
-Le site comprend trois menus : **Profil**, **Réseaux** et **Réglages audio**.
-Il fonctionne sur ordinateur et téléphone, en HTML, CSS et JavaScript.
+## English
 
-Pour créer ton site, suis les étapes 1 à 3 ci-dessous. Tout se fait depuis GitHub,
-avec un compte gratuit. Les parties « Tester sur ton PC » et « Docker » sont
-facultatives.
+A personal website template created by **Trim**, inspired by the Nintendo 3DS
+settings menu. The cream background, raised buttons, spacing, textures,
+animations and continuous music player are retained. Setup runs locally;
+your personal files are never uploaded automatically.
 
-## 1. Créer ta copie du site
+### Download and start
 
-1. Connecte-toi à ton compte GitHub et ouvre [ce dépôt](https://github.com/trim360/3ds-profile-template).
-2. Au-dessus des fichiers, clique sur **Use this template**, puis **Create a new repository**.
-3. Choisis ton compte comme propriétaire et donne un nom à ton dépôt, par exemple `mon-profil`.
-4. Choisis **Public** pour utiliser gratuitement GitHub Pages, puis clique sur **Create repository from template**.
+Download the ZIP from this repository or its GitHub Releases, extract it,
+and open the extracted folder. Install a supported [Node.js LTS](https://nodejs.org/)
+release, version **22 or newer**. Node.js is needed for the setup tools, not for
+visitors or static hosting. No npm package installation is required.
 
-Tu as maintenant ta propre copie. Fais les modifications dans **ton dépôt**.
+- **Windows:** double-click `setup.bat`. If Node.js is missing, the launcher
+  offers installation through `winget` when available, after asking you.
+  Installer/UAC prompts remain yours to approve. Restart setup after installation.
+- **Linux:** run `sh setup.sh`, or `chmod +x setup.sh` then `./setup.sh`.
+  If Node.js is missing or too old, the launcher identifies an available package
+  manager and points you to Node.js. It never runs `sudo` or installs silently.
 
-## 2. Mettre ton pseudo et tes liens
+Choose English or French at the first prompt. Select **1** to configure your
+profile. Blank answers keep existing values or skip optional questions;
+enter `-` to clear an optional text field. Run the same launcher again to edit
+only the profile, picture, links, pages, music, credits or language settings.
 
-Dans ton dépôt, ouvre [config.js](config.js), puis clique sur le crayon pour
-modifier le fichier. Remplace son contenu par cet exemple, en adaptant le pseudo
-et les deux liens :
+### Profile, pages and images
 
-```js
-// Copyright (C) 2026 Trim. GPLv3 and attribution: see LICENSE and NOTICE.
-window.PROFILE_CONFIG = {
-  name: 'Ton pseudo',
-  domain: 'Mon site personnel',
-  avatar: 'assets/avatar.svg',
-  music: '',
-  musicTitle: '',
-  icons: {
-    settings: 'assets/settings.svg',
-    profile: 'assets/profile.svg',
-    network: 'assets/network.svg',
-    audio: 'assets/audio.svg',
-  },
-  links: [
-    {
-      name: 'GitHub',
-      icon: 'github',
-      label: '@ton-pseudo',
-      url: 'https://github.com/ton-pseudo',
-    },
-    {
-      name: 'Discord',
-      icon: 'discord',
-      label: 'Mon serveur',
-      url: 'https://discord.gg/ton-invitation',
-    },
-  ],
-};
-```
+The wizard supports your display name, pronouns, title, short About Me,
+biography, interests, projects, website, social links, portrait and cover.
+Empty optional fields create no extra section. Names, pronouns and URLs remain
+exactly as supplied, including when visitors change language.
 
-Clique ensuite sur **Commit changes** pour enregistrer. Le pseudo et l’invitation
-de cet exemple sont à remplacer par les tiens.
+Create **About Me, Projects, Sona, Gallery, Links or Custom** pages. Each has
+a title, plain-text content and visibility. Images can have captions and artist
+credits. Sona pages also accept character traits and multiple illustrations.
+The page/image lists let you add and remove entries; removing an entry keeps
+its media files and backups. Advanced settings control menu order, hidden
+sections, titles, icon files and the initial page. Back still opens the main menu.
 
-| Champ | Ce qu’il change |
-| --- | --- |
-| `name` | Ton pseudo dans le titre et la page Profil. |
-| `domain` | Le texte affiché en haut à gauche. Ce champ ne configure pas un nom de domaine. |
-| `avatar` | Le chemin de ta photo. Garde `assets/avatar.svg` pour utiliser l’avatar fourni. |
-| `music` | Le chemin du fichier audio. Garde `''` pour laisser la musique désactivée. |
-| `musicTitle` | Le titre affiché dans les réglages audio. |
-| `icons` | Les images des boutons Profil, Réseaux, Audio et de l’en-tête. Voir la section Icônes ci-dessous. |
-| `links` | Les liens affichés dans Réseaux. Garde `[]` si tu n’en veux aucun. |
+Paste local paths, including paths with spaces. Images support **PNG, JPG,
+GIF and WebP up to 10 MB**; audio supports **MP3, OGG and WAV up to 30 MB**.
+Setup checks the extension and file signature, copies the bytes under a unique
+filename and verifies the copy. Originals are never moved or recompressed.
+Imported SVG files are not accepted by the wizard; existing template SVG icons
+and advanced icon URLs remain supported.
 
-Pour chaque réseau, `name` est son nom, `label` est le texte affiché dessous et
-`url` est l’adresse complète qui s’ouvre au clic. Tu peux ajouter TikTok, YouTube,
-un autre réseau ou ton propre site en reprenant un des blocs entre `{` et `}`.
-Sépare les blocs par une virgule et utilise des liens commençant par `https://`.
+Social links have built-in `github`, `tiktok`, `x`/`twitter`, `youtube` and
+`discord` logos. For your own image, paste its local path into option **3**
+(social icon) or **a** (menu icons). Quoted paths with spaces work; setup copies
+the image into `user-content/media/` and includes it in the export.
+For manual configuration, use `icons` and `links[].icon` in `config.js` before
+the first setup, or in `user-content/profile.json` afterwards. After editing JSON,
+run setup and save a setting to regenerate `config.js`. Use `assets/logo.png`, without
+a leading slash, for project sites hosted in a subfolder. A missing image uses
+the supplied fallback and a visible message. The original supplied settings
+wrench and orange Nintendo Network profile mark are included with separate
+asset notices in [NOTICE](NOTICE); other icons are retained.
 
-Les apostrophes servent à délimiter le texte. Si ton texte contient une apostrophe,
-entoure-le de guillemets doubles, par exemple `musicTitle: "Ma musique d'ambiance"`.
-Ne mets aucun mot de passe ni clé secrète dans ce fichier : son contenu est public.
+### Music and credits
 
-## 3. Mettre ton site en ligne avec GitHub Pages
+Music is optional. When configuring it, the wizard asks whether it belongs to
+Nintendo: **Yes / No / Not sure**. It does not infer rights from an MP3.
+Nintendo music asks for a title and generates the Nintendo attribution and
+unofficial-project notice. Other music asks for its artist, title and optional
+license/source URL. Unknown rights can continue without music.
 
-Dans **ton dépôt** :
+**Attribution is not permission to use Nintendo music.** Confirm that you may
+publish your audio before importing it. No Nintendo music is distributed here.
+Personal media under `user-content/` and audio extensions are ignored by Git by
+default. `.gitignore` does not remove files already tracked or their history;
+review those separately before publishing a repository.
 
-1. Ouvre **Settings**, puis **Pages** dans le menu de gauche.
-2. Dans **Build and deployment**, choisis **Deploy from a branch** comme source.
-3. Sélectionne la branche **main**, puis le dossier **/ (root)** et clique sur **Save**.
-4. Attends la fin du déploiement. La page **Settings → Pages** affichera le lien de ton site.
+The looping player keeps its volume/mute preferences and continues between
+menus and language changes. Browser autoplay restrictions still require an
+interaction. Without a configured track, audio controls are disabled cleanly.
+Add artist/community credits through setup; the required original **Trim**
+credit remains visible in the Credits disclosure.
 
-Pour un dépôt nommé `mon-profil`, l’adresse habituelle est
-`https://ton-pseudo.github.io/mon-profil/`. Utilise le lien indiqué par GitHub.
-Chaque modification enregistrée sur `main` déclenche une nouvelle publication.
+### Languages
 
-Tu peux garder cette adresse gratuite. Si tu possèdes déjà un domaine, son
-raccordement se règle séparément dans GitHub Pages et chez ton fournisseur DNS.
-Changer `domain` dans `config.js` ne change que le texte du site.
+The interface chooses English/French from the browser on the first visit,
+with English as fallback. The language selector remembers a visitor’s choice
+and does not reload the player. UI dictionaries live in `locales/en.json` and
+`locales/fr.json`. Add further dictionaries and extend the supported-language
+list in `lib/translations.mjs` to support another language.
 
-Ces étapes suivent les guides GitHub pour [créer une copie d’un modèle](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
-et [publier depuis une branche](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+Personal content translations are **opt-in and manually supplied** in setup.
+Descriptions, biographies and page text can have English/French versions;
+missing translations retain the original content. UI dictionaries are cached
+in memory and translation failures fall back to English. No translation API,
+paid service or private API key is required, and profile text is not sent to
+a third-party translator. No external automatic content-translation provider
+is integrated in this release.
 
-## Ajouter ta photo ou ta musique
+### Preview, export and deployment
 
-Dans le dossier `assets` de ton dépôt, utilise **Add file → Upload files**,
-ajoute ton fichier, puis enregistre avec **Commit changes**.
+Select **9** in setup for a local-only preview. The wizard prints the actual
+available loopback address; keep it running, then press Enter to stop.
+Select **b** to export the site to `dist/`, after confirming. Export includes
+the current profile and only the referenced personal media. Existing generated
+builds are moved into `backups/`; an unrelated output folder is not overwritten.
 
-Par exemple, si tu ajoutes `photo.png` et `musique.mp3` dans `assets`, change
-uniquement ces lignes de `config.js` :
+- **Static hosting / GitHub Pages:** deploy the contents of `dist/`. Uploading
+  the source root alone after setup omits Git-ignored personal media. For Pages,
+  put the exported contents in your chosen publishing branch and select that
+  branch’s root in Settings → Pages. Your publishing action is separate from setup.
+- **Docker:** from the project folder run `docker compose up -d --build`.
+  The Node.js build stage creates the static export; Nginx serves it on port 8080.
+  Run it again after local changes. `docker compose down` stops the container.
 
-```js
-avatar: 'assets/photo.png',
-music: 'assets/musique.mp3',
-musicTitle: 'Le titre de ma musique',
-```
+Everything in a deployed website, including `config.js` and media, is public.
+Never put secrets in your profile. The `domain` field is a display label;
+DNS/custom-domain configuration is separate. No setup action publishes a site.
 
-Ce bloc remplace les trois lignes correspondantes dans la configuration ;
-ne remplace pas tout le fichier avec ces trois lignes seules.
-Respecte exactement le nom du fichier, son extension et les majuscules.
-Les chemins `assets/...` fonctionnent aussi quand GitHub Pages héberge le site
-dans un sous-dossier. Choisis de préférence des noms sans espaces ni accents.
+### Updates and backups
 
-La musique attend une interaction sur la page pour démarrer. Tu peux ensuite
-la couper ou changer son volume dans **Réglages audio**. Le navigateur conserve
-ces réglages et la musique continue quand tu changes de menu.
+The browser checks the official **stable GitHub Releases**, at most once per
+24 hours by default. It offers View update / Later and handles missing releases,
+network errors and rate limits. Commits on `main` are not release notifications.
+Until a stable Release is published, it correctly reports that none exists.
 
-Ajoute uniquement des médias que tu as le droit de publier. Ce dépôt fournit
-un avatar et des icônes SVG génériques. La photo de Trim, la musique et les
-icônes officielles Nintendo de son site personnel ne sont pas incluses.
+Use setup option **8**, or `node scripts/update.mjs`, for installation.
+The tool shows the version/changelog and asks before installing. It verifies
+the GitHub asset’s SHA256 digest, every file hash, Node/schema compatibility
+and the installed core-file baseline. An edited core file or conflicting
+personal image stops the update instead of overwriting it. No `git reset --hard`,
+downloaded migration code or package-install scripts are executed.
 
-## Changer les icônes
+Your profile, pronouns, pages, translations, images, music and credits stay in
+`user-content/`; generated `config.js`, `.env` files and personal paths are
+protected. Backups are in `backups/`. Core writes are journaled, the version is
+written last, and a failed install restores prior files. If an interrupted
+update left a journal, rerun the updater to approve recovery. A new manual edit
+during recovery causes a stop for manual merging; the backup is retained.
 
-Les icônes nécessaires au modèle sont déjà fournies. Tu peux garder celles-ci,
-utiliser les logos intégrés pour les réseaux, ou ajouter tes propres images.
-Il n’y a aucun pack d’icônes à installer.
+The previous literal `window.PROFILE_CONFIG` format is imported without
+executing JavaScript and migrated to schema 2. Unsupported executable
+configuration or unknown schema versions require manual migration. Older ZIP
+installs need a known baseline; modified or unrecognized core files require
+a manual merge. Back up the whole folder before updating. Docker and Pages
+still need their own rebuild/deployment after a local update.
 
-### Boutons Profil, Réseaux, Audio et en-tête
+### File layout and troubleshooting
 
-Ajoute ton image PNG, JPG ou SVG dans `assets`, puis change son chemin dans le
-bloc `icons` de `config.js`. Par exemple, après avoir ajouté `mon-profil.png` :
+`user-content/profile.json` stores your profile; individual pages live in
+`user-content/pages/`, imported media in `user-content/media/`. `config.js` is
+the generated browser payload and is protected by the updater. Editing through
+setup uses the JSON profile as its source once present. `examples/` contains
+clearly labeled sample data with no personal profile or music.
 
-```js
-icons: {
-  settings: 'assets/settings.svg',
-  profile: 'assets/mon-profil.png',
-  network: 'assets/network.svg',
-  audio: 'assets/audio.svg',
-},
-```
+If setup reports an error, correct the path/format or dependency and retry.
+If a lock says another setup is running, close that process first. Stale locks
+from a dead process are reclaimed. If icons look wrong after a manual update,
+use HTML, CSS, JS and bundled assets from the same version, keeping your profile
+and personal media. `node scripts/validate-config.mjs` checks configuration;
+`node --test` runs the test suite. Physical-browser testing is currently Chromium;
+other browser families are not claimed as tested.
 
-Ce bloc remplace le bloc `icons` à l’intérieur de `window.PROFILE_CONFIG`.
-`settings` change l’image de l’en-tête et le favicon, `profile` le bouton Profil,
-`network` le bouton Réseaux et `audio` le bouton Réglages audio.
-Si tu omets le bloc ou un de ses champs, l’icône fournie correspondante est utilisée.
+### Community Credits
 
-Les images gardent leurs couleurs et leurs proportions. Un PNG transparent
-permet d’éviter un rectangle de fond, mais une image JPG fonctionne aussi.
-Un fichier absent ou illisible déclenche un message et un retour à l’icône
-fournie, si celle-ci est toujours présente.
+Thanks to [weizkule](https://weizkule.be) for their creative customizations,
+Sona page and ideas for improving the profile. Original creator: **Trim**.
+The historical MIT notice for JAQLIV remains in `LICENSES/MIT-original.txt`.
 
-### Logos des réseaux sociaux
+### License
 
-Dans chaque élément de `links`, ajoute `icon`. Pour un logo intégré, utilise
-`tiktok`, `x` (ou `twitter`), `github`, `youtube` ou `discord`. Par exemple :
+Code: [GNU GPLv3](LICENSE), with the reasonable attribution term in [NOTICE](NOTICE).
+**Keep Trim’s name in accessible site credits.** You may restyle or move that
+credit. Retain license notices and provide corresponding source when distributing
+modified code. Third-party images retain their separate notices and trademark
+rights; the code license grants no Nintendo endorsement. Provided without warranty.
 
-```js
-{
-  name: 'GitHub',
-  icon: 'github',
-  label: '@ton-pseudo',
-  url: 'https://github.com/ton-pseudo',
-},
-```
+## Français
 
-Ces noms utilisent les SVG intégrés à la page, sans téléchargement supplémentaire.
-Pour ton propre logo, ajoute d’abord son fichier dans `assets`, puis remplace
-`icon: 'github'` par, par exemple, `icon: 'assets/mon-logo.png'`.
-Le nom affiché et le logo sont indépendants : tu peux garder le libellé de ton choix.
-Sans icône reconnue, un globe est utilisé.
+Un modèle de site personnel créé par **Trim**, inspiré des paramètres Nintendo 3DS.
+Le fond crème, les boutons en relief, les dimensions, les textures, les animations
+et le lecteur musical continu sont conservés. L’assistant fonctionne en local
+et ne téléverse jamais automatiquement tes fichiers personnels.
 
-### Si une icône ne s’affiche pas
+### Télécharger et lancer
 
-- Garde l’extension réelle : renommer `logo.png` en `logo.svg` ne convertit pas l’image.
-- Écris le chemin exact, majuscules comprises : `assets/Logo.png` et `assets/logo.png` peuvent désigner deux fichiers différents.
-- Sur GitHub Pages, utilise `assets/logo.png`, sans `/` au début, pour rester dans le sous-dossier de ton site.
-- Pour une image externe, utilise l’URL du fichier lui-même, accessible publiquement, et non une page de prévisualisation.
-- Ouvre le fichier dans le dossier `assets` sur GitHub pour vérifier qu’il a bien été ajouté, puis attends la nouvelle publication et recharge le site.
+Télécharge le ZIP du dépôt ou de ses GitHub Releases, extrais-le et ouvre son
+dossier. Installe une version [Node.js LTS](https://nodejs.org/) prise en charge,
+**22 ou plus récente**. Node.js sert aux outils de configuration, pas aux visiteurs
+ni à l’hébergement statique. Aucune installation de paquet npm n’est nécessaire.
 
-Si tu utilises une ancienne copie du modèle, elle ne récupère pas automatiquement
-les modifications de ce dépôt. Sauvegarde ta configuration et tes médias, puis
-récupère ensemble les nouvelles versions de `index.html`, `style.css`, `script.js`
-et des SVG fournis dans `assets`. Conserve tes médias et ton `config.js` personnel ;
-tu peux y ajouter le bloc `icons` ci-dessus. Évite de mélanger l’ancien HTML
-avec la nouvelle feuille de style ou l’inverse.
+- **Windows :** double-clique sur `setup.bat`. Si Node.js manque, le lanceur
+  propose `winget` lorsqu’il est disponible et demande ton accord. Les fenêtres
+  de l’installateur/UAC restent à valider par toi. Relance setup après installation.
+- **Linux :** lance `sh setup.sh`, ou `chmod +x setup.sh` puis `./setup.sh`.
+  Si Node.js manque ou est trop ancien, le lanceur identifie un gestionnaire de
+  paquets disponible et indique la source Node.js. Il n’exécute jamais `sudo`
+  et n’installe rien silencieusement.
 
-## Tester sur ton PC avant de publier (facultatif)
+Choisis le français ou l’anglais au premier écran, puis **1** pour créer ton profil.
+Une réponse vide conserve la valeur existante ou ignore une question facultative ;
+`-` efface un texte facultatif. Relance le même fichier pour modifier uniquement
+le profil, la photo, les réseaux, les pages, la musique, les crédits ou la langue.
 
-Télécharge ton dépôt avec **Code → Download ZIP**, puis extrais le ZIP.
-Ouvre un terminal dans le dossier qui contient `index.html`.
-Il faut avoir Python 3 installé pour utiliser les commandes suivantes.
+### Profil, pages et images
 
-Sous Windows, dans PowerShell :
+L’assistant gère pseudo, pronoms, titre, courte description À propos, biographie,
+centres d’intérêt, projets, site, réseaux, portrait et couverture. Un champ vide
+n’ajoute aucune rubrique. Pseudonymes, pronoms et adresses restent tels quels,
+même lorsque les visiteurs changent de langue.
 
-```powershell
-py -m http.server 8080 --bind 127.0.0.1
-```
+Crée des pages **About Me, Projects, Sona, Gallery, Links ou Custom**. Chacune a
+un titre, un contenu en texte simple et une visibilité. Les images acceptent
+légendes et crédits d’artistes. Les pages Sona peuvent contenir des caractéristiques
+et plusieurs illustrations. Tu peux ajouter/retirer des pages et des images ;
+retirer une entrée conserve ses fichiers et sauvegardes. Les réglages avancés
+gèrent l’ordre, la visibilité, les titres, les icônes et la page initiale.
+Le bouton Retour continue d’ouvrir le menu principal.
 
-Sous Linux ou macOS :
+Colle les chemins locaux, y compris avec des espaces. Images : **PNG, JPG, GIF
+et WebP jusqu’à 10 Mo** ; audio : **MP3, OGG et WAV jusqu’à 30 Mo**. Setup contrôle
+l’extension et la signature, copie les octets sous un nom unique et vérifie la
+copie. Il ne déplace ni ne recompresse l’original. L’import SVG n’est pas proposé
+par l’assistant ; les SVG du modèle et les adresses d’icônes avancées restent utilisables.
 
-```sh
-python3 -m http.server 8080 --bind 127.0.0.1
-```
+Les réseaux possèdent les logos intégrés `github`, `tiktok`, `x`/`twitter`,
+`youtube` et `discord`. Pour ta propre image, colle son chemin dans **3**
+(logo de réseau) ou **a** (icônes des menus). Les chemins avec espaces et guillemets
+fonctionnent ; setup copie l’image dans `user-content/media/` et l’ajoute à l’export.
+En configuration manuelle, utilise `icons` et `links[].icon` dans `config.js` avant
+le premier setup, puis dans `user-content/profile.json`. Après modification du JSON,
+relance setup et enregistre un réglage pour régénérer `config.js`. Utilise `assets/logo.png`
+sans `/` initial pour un site placé dans un sous-dossier. Une image manquante
+utilise une icône de secours et un message visible. La clé 3DS originale fournie
+et le logo Nintendo Network orange sont inclus avec leurs mentions séparées
+dans [NOTICE](NOTICE) ; les autres icônes restent conservées.
 
-Ouvre ensuite [http://127.0.0.1:8080/](http://127.0.0.1:8080/) dans ton navigateur.
-Garde le terminal ouvert pendant le test ; **Ctrl + C** arrête le serveur local.
-Il n’y a aucune commande npm à lancer. Les changements faits sur ton PC restent
-locaux tant que tu ne les envoies pas dans ton dépôt GitHub.
+### Musique et crédits
 
-## Héberger avec Docker (facultatif)
+La musique est facultative. Setup demande si elle appartient à Nintendo :
+**Oui / Non / Je ne sais pas**. Il ne déduit pas les droits depuis le MP3.
+Une musique Nintendo demande son titre et génère son crédit avec la mention
+de projet non officiel. Pour une autre musique, renseigne artiste, titre et
+éventuelle adresse de licence/source. Une provenance inconnue permet de continuer sans musique.
 
-Cette méthode sert à héberger le site sur un ordinateur ou un serveur équipé
-de Docker et du plugin Docker Compose. Elle remplace l’hébergement GitHub Pages.
-Depuis le dossier du projet, après avoir personnalisé `config.js` :
+**Créditer Nintendo ne donne pas l’autorisation d’utiliser sa musique.**
+Confirme ton droit de diffusion avant l’import. Aucune musique Nintendo n’est
+distribuée ici. Les médias de `user-content/` et les extensions audio sont ignorés
+par Git par défaut. `.gitignore` ne retire pas les fichiers déjà suivis ni leur
+historique : vérifie-les séparément avant de publier un dépôt.
 
-```sh
-docker compose up -d --build
-```
+Le lecteur boucle, garde volume/mute et continue entre les menus et les langues.
+Le navigateur impose toujours une interaction avant lecture. Sans fichier,
+les commandes audio sont désactivées proprement. Ajoute les crédits d’artistes
+ou communautaires dans setup ; le crédit obligatoire **Trim** reste accessible
+dans le volet Crédits.
 
-Ouvre [http://localhost:8080/](http://localhost:8080/) sur cette machine, ou
-`http://IP-DU-SERVEUR:8080/` depuis un appareil qui peut joindre le serveur.
-Pour choisir un autre port, remplace la partie gauche de `8080:80` dans
-`docker-compose.yml`, par exemple par `8081:80`.
+### Langues
 
-Après une modification des fichiers, relance la même commande pour reconstruire
-l’image. Pour arrêter le site, lance `docker compose down` depuis ce dossier.
+Au premier chargement, l’interface choisit français/anglais selon le navigateur,
+avec l’anglais en secours. Le sélecteur mémorise le choix du visiteur sans
+relancer le lecteur. Les dictionnaires sont `locales/en.json` et `locales/fr.json`.
+Pour une autre langue, ajoute son dictionnaire et étends la liste prise en charge
+dans `lib/translations.mjs`.
 
-## Si quelque chose ne marche pas
+Les traductions du contenu sont **manuelles et sur activation** dans setup.
+Descriptions, biographies et textes des pages peuvent avoir une version française
+et anglaise ; une traduction absente conserve l’original. Les dictionnaires sont
+mis en cache en mémoire ; une traduction d’interface indisponible revient à l’anglais.
+Aucune API de traduction, offre payante ou clé privée n’est requise. Les textes
+personnels ne sont pas envoyés à un traducteur tiers. Cette version n’intègre
+aucun fournisseur de traduction automatique du contenu.
 
-| Problème | À vérifier |
-| --- | --- |
-| Le site affiche encore « Votre pseudo ». | As-tu modifié et enregistré `config.js` dans ton dépôt ? Attends le nouveau déploiement, puis recharge la page. |
-| La photo ne s’affiche pas. | Le fichier est-il dans `assets` ? Son nom correspond-il exactement à la valeur de `avatar` ? |
-| Mes infos disparaissent après une modification. | Vérifie les virgules, les guillemets et les accolades de `config.js`. Repars de l’exemple complet si nécessaire. |
-| Le son reste désactivé. | Renseigne `music`, vérifie le fichier, clique sur la page et active le son avec un volume supérieur à zéro. |
-| Aucun réseau ne s’affiche. | Ajoute des blocs dans `links` et remplace les adresses d’exemple par tes liens HTTPS. |
-| Le site GitHub Pages renvoie 404. | Vérifie que la publication utilise `main` et `/ (root)`, puis consulte le déploiement dans l’onglet Actions du dépôt. |
-| Le bouton Use this template n’apparaît pas. | Connecte-toi à GitHub et ouvre le dépôt original indiqué à l’étape 1. |
+### Aperçu, export et déploiement
 
-## Crédit de Trim et licence
+Choisis **9** pour l’aperçu local. Setup affiche l’adresse de boucle locale réellement
+disponible ; garde-le ouvert et appuie sur Entrée pour arrêter. Choisis **b** pour
+exporter dans `dist/`, après confirmation. L’export contient le profil et seulement
+les médias personnels référencés. Les anciens exports générés passent dans `backups/` ;
+un dossier de sortie étranger au projet n’est pas écrasé.
 
-Tu peux utiliser, modifier et redistribuer le modèle sous **GNU GPLv3** avec
-la clause d’attribution décrite dans [NOTICE](NOTICE).
-**Le nom Trim doit rester dans les crédits de ton site.** Le volet
-« Crédits : Trim » est déjà inclus. Tu peux le déplacer ou changer son apparence,
-tant qu’il reste accessible et lisible.
+- **Hébergement statique / GitHub Pages :** déploie le contenu de `dist/`.
+  Publier seulement la racine du code après setup omet les médias ignorés par Git.
+  Pour Pages, place l’export dans ta branche de publication et sélectionne sa racine
+  dans Settings → Pages. La publication est une action distincte de setup.
+- **Docker :** lance `docker compose up -d --build` depuis le projet. L’étape Node.js
+  crée l’export statique puis Nginx le sert sur le port 8080. Relance la commande
+  après modification ; `docker compose down` arrête le conteneur.
 
-Conserve [LICENSE](LICENSE), [NOTICE](NOTICE) et la notice d’origine
-[LICENSES/MIT-original.txt](LICENSES/MIT-original.txt). Les versions du code que
-tu distribues doivent rester sous GPLv3 et être accompagnées de leur source
-correspondante. Le modèle est fourni sans garantie.
+Tout fichier déployé, dont `config.js` et les médias, devient public. Ne mets
+aucun secret dans ton profil. `domain` ne change que le libellé affiché ; le DNS
+et le domaine personnalisé se règlent séparément. Setup ne publie aucun site.
 
-La notice MIT de JAQLIV concerne la base historique du projet. Ce projet n’est
-pas affilié à Nintendo.
+### Mises à jour et sauvegardes
 
-Créé par [Trim](https://kirbytrim.buzz/) · [Profil GitHub](https://github.com/trim360)
+Le navigateur consulte les **GitHub Releases stables officielles**, au plus une
+fois par 24 h par défaut. Voir la mise à jour / Plus tard sont proposés ; absence
+de Release, erreurs réseau et limites sont gérées. Les commits sur `main` ne sont
+pas des notifications de version. Tant qu’aucune Release stable n’est publiée,
+l’outil indique correctement qu’il n’y en a aucune.
+
+Utilise **8** dans setup ou `node scripts/update.mjs --fr` pour installer.
+L’outil présente version/changements puis demande confirmation. Il vérifie
+l’empreinte SHA256 fournie par GitHub, chaque fichier, Node.js, le schéma et la
+référence des fichiers internes installés. Un fichier interne modifié ou une
+image personnelle en conflit arrête l’installation. Aucun `git reset --hard`,
+script de migration téléchargé ou script d’installation de paquets n’est exécuté.
+
+Profil, pronoms, pages, traductions, images, musiques et crédits résident dans
+`user-content/` ; le `config.js` généré, les `.env` et les chemins personnels sont
+protégés. Les sauvegardes sont dans `backups/`. Les écritures sont journalisées,
+la version est enregistrée en dernier et un échec restaure les anciens fichiers.
+Après une interruption laissant un journal, relance l’outil pour accepter la
+restauration. Si un nouveau travail manuel crée un conflit pendant la reprise,
+l’outil s’arrête pour une fusion manuelle et conserve la sauvegarde.
+
+L’ancien objet littéral `window.PROFILE_CONFIG` est importé sans exécuter de
+JavaScript puis migré vers le schéma 2. Une configuration exécutable ou un schéma
+inconnu demande une migration manuelle. Une ancienne installation ZIP doit
+correspondre à une référence connue ; les fichiers internes inconnus ou modifiés
+demandent une fusion manuelle. Sauvegarde tout le dossier avant une mise à jour.
+Docker et Pages nécessitent toujours leur propre reconstruction/déploiement ensuite.
+
+### Fichiers et dépannage
+
+Le profil est `user-content/profile.json`, les pages individuelles sont dans
+`user-content/pages/` et les imports dans `user-content/media/`. `config.js` est
+le fichier navigateur généré et protégé par l’updater. Dès qu’il existe, le profil
+JSON sert de source à setup. `examples/` contient des exemples explicitement nommés,
+sans profil personnel réel ni musique.
+
+En cas d’erreur, corrige chemin/format ou dépendance puis réessaie. Si un verrou
+signale un autre setup actif, ferme ce processus d’abord. Les verrous d’un processus
+terminé sont repris. Après une mise à jour manuelle, garde HTML, CSS, JS et images
+de la même version, en conservant ton profil et tes médias. La commande
+`node scripts/validate-config.mjs` vérifie le profil ; `node --test` lance les tests.
+Les essais de navigateur physique concernent actuellement Chromium ; les autres
+familles ne sont pas déclarées testées.
+
+### Community Credits
+
+Merci à [weizkule](https://weizkule.be) pour ses personnalisations créatives,
+sa page sona et ses idées d’amélioration du profil. Créateur original : **Trim**.
+La notice MIT historique de JAQLIV reste dans `LICENSES/MIT-original.txt`.
+
+### Licence
+
+Code sous [GNU GPLv3](LICENSE), avec la clause d’attribution de [NOTICE](NOTICE).
+**Le nom Trim doit rester dans des crédits accessibles.** Tu peux déplacer ou
+restyler ce crédit. Conserve les notices et fournis le code source correspondant
+en distribuant une version modifiée. Les images tierces gardent leurs propres
+mentions et droits de marque ; la licence du code n’accorde aucune approbation
+Nintendo. Le modèle est fourni sans garantie.

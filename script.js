@@ -1,8 +1,26 @@
 // Copyright (C) 2026 Trim. GPLv3 and attribution: see LICENSE and NOTICE.
+import { normalizeConfig, validateConfig, DEFAULT_ICONS } from './lib/config.mjs';
+import { chooseLanguage, loadDictionary, format } from './lib/translations.mjs';
+import { renderProfile, renderPages, renderCredits } from './lib/content.mjs';
+import { latestRelease, compareVersions, releaseUrl } from './lib/releases.mjs';
 const $ = (id) => document.getElementById(id);
 const music = $('music');
-const config = window.PROFILE_CONFIG || {};
-const profileName = String(config.name || 'Votre pseudo');
+let configurationError = '';
+let config;
+try {
+  const errors = validateConfig(window.PROFILE_CONFIG || {});
+  if (errors.length) throw new Error(errors.join(' '));
+  config = normalizeConfig(window.PROFILE_CONFIG || {});
+} catch (error) { config = normalizeConfig(); configurationError = error.message; }
+let savedLanguage;
+try { savedLanguage = localStorage.getItem('trimLanguage'); } catch {}
+let locale;
+try { locale = await loadDictionary(chooseLanguage(config.language, navigator.languages || [navigator.language], savedLanguage)); }
+catch { locale = { language: 'en', strings: {}, fallback: true }; }
+let language = locale.language;
+let strings = locale.strings;
+const t = (key, values) => format(strings[key] || document.querySelector(`[data-i18n="${key}"]`)?.textContent || key, values);
+let profileName = config.name || t('defaultName');
 function safeUrl(value) {
   if (typeof value !== 'string' || !value.trim()) return '';
   try {
@@ -11,14 +29,14 @@ function safeUrl(value) {
   } catch { return ''; }
 }
 document.querySelectorAll('[data-profile-name]').forEach((element) => { element.textContent = profileName; });
-const defaultIcons = { settings: 'assets/settings.svg', profile: 'assets/profile.svg', network: 'assets/network.svg', audio: 'assets/audio.svg' };
+const defaultIcons = DEFAULT_ICONS;
 const icons = config.icons && typeof config.icons === 'object' ? config.icons : {};
 const favicon = document.querySelector('link[rel="icon"]');
 function setIconImage(image, source, fallback) {
   const fallbackUrl = safeUrl(fallback);
   image.addEventListener('error', () => {
     $('asset-status').hidden = false;
-    $('asset-status').textContent = 'Une icône n’a pas pu être chargée. L’icône par défaut est utilisée si elle est disponible.';
+    $('asset-status').textContent = t('assetError');
     if (image.src !== fallbackUrl) image.src = fallbackUrl;
     else image.hidden = true;
     if (image.dataset.menuIcon === 'settings') favicon.href = fallbackUrl;
@@ -33,7 +51,7 @@ for (const image of document.querySelectorAll('[data-menu-icon]')) {
     favicon.href = image.src;
   }
 }
-$('site-domain').textContent = String(config.domain || 'Site personnel');
+$('site-domain').textContent = config.domain || t('personalSite');
 $('profile-image').src = safeUrl(config.avatar) || 'assets/avatar.svg';
 $('profile-image').alt = `Avatar de ${profileName}`;
 const musicUrl = safeUrl(config.music);
@@ -54,7 +72,7 @@ for (const link of Array.isArray(config.links) ? config.links : []) {
   const preset = iconName === 'twitter' ? 'x' : iconName;
   const presetId = ['tiktok', 'x', 'github', 'youtube', 'discord'].includes(preset) ? preset : 'network';
   let icon;
-  if (presetId !== 'network' || !safeUrl(link.icon)) {
+  if (presetId !== 'network' || preset === 'network' || !safeUrl(link.icon)) {
     icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     use.setAttribute('href', `#icon-${presetId}`);
@@ -81,8 +99,12 @@ for (const link of Array.isArray(config.links) ? config.links : []) {
 if ($('social-links').children.length) $('links-note').textContent = 'Les liens s’ouvrent dans un nouvel onglet.';
 $('copy-discord').hidden = !discordUrl;
 const preferenceKey = 'trimAudioPreferences';
-const pages = ['accueil', 'profil', 'reseaux', 'audio'];
-const titles = { accueil: 'Menu principal', profil: 'Profil', reseaux: 'Réseaux', audio: 'Réglages audio' };
+let pages = ['accueil', 'profil', 'reseaux', 'audio'];
+let titles = {};
+let visitCount = null;
+let currentRelease = null;
+let updateStatusKey = '';
+let clipboardState = null;
 let currentPage = 'accueil';
 let enabled = Boolean(musicUrl);
 let volume = 0.25;
@@ -103,30 +125,28 @@ function savePreferences() {
   try { localStorage.setItem(preferenceKey, JSON.stringify({ enabled, volume })); storageAvailable = true; }
   catch { storageAvailable = false; }
   $('storage-note').textContent = storageAvailable
-    ? 'Tes réglages sont enregistrés sur cet appareil.'
-    : 'Le stockage du navigateur est indisponible. Les réglages restent actifs pour cette visite.';
+    ? t('stored') : t('notStored');
 }
 
 function updateAudio() {
   for (const id of ['music-enabled', 'volume-slider', 'audio-toggle']) $(id).disabled = !musicUrl;
   $('music-enabled').checked = enabled;
-  $('enabled-description').textContent = enabled ? 'Activée' : 'Désactivée';
+  $('enabled-description').textContent = t(enabled ? 'enabled' : 'disabled');
+  $('music-enabled').setAttribute('aria-label', t('enableMusic'));
   $('volume-slider').value = String(Math.round(volume * 100));
   $('volume-slider').setAttribute('aria-valuetext', `${Math.round(volume * 100)} %`);
   $('volume-value').textContent = `${Math.round(volume * 100)} %`;
   $('audio-toggle').setAttribute('aria-pressed', String(enabled));
-  $('audio-toggle').setAttribute('aria-label', enabled ? 'Désactiver la musique' : 'Activer la musique');
-  $('audio-toggle-label').textContent = enabled ? 'Son activé' : 'Son désactivé';
-  let status = !enabled ? 'Musique désactivée' : volume === 0 ? 'Volume à zéro' : 'Musique au premier clic';
+  $('audio-toggle').setAttribute('aria-label', t(enabled ? 'mute' : 'unmute'));
+  $('audio-toggle-label').textContent = t(enabled ? 'soundOn' : 'soundOff');
+  let status = !enabled ? t('soundOff') : volume === 0 ? t('zeroVolume') : t('firstClick');
   if (enabled && volume > 0 && interacted) {
-    status = state === 'playing' ? 'Musique en lecture' : state === 'loading' ? 'Chargement de la musique…'
-      : state === 'blocked' ? 'Appuie sur le bouton Son pour démarrer.' : state === 'error' ? 'Musique indisponible' : 'Musique en pause';
+    status = t({ playing: 'playing', loading: 'loading', blocked: 'blocked', error: 'musicError', idle: 'paused' }[state] || 'paused');
   }
-  $('music-status').textContent = musicUrl ? status : 'Aucune musique configurée';
+  $('music-status').textContent = musicUrl ? status : t('noMusic');
   $('audio-error').hidden = !enabled || !['error', 'blocked'].includes(state);
   $('audio-error-message').textContent = state === 'blocked'
-    ? 'Le navigateur attend une interaction pour lire la musique. Appuie sur Réessayer.'
-    : 'La musique n’a pas pu être chargée. Vérifie ta connexion, puis réessaie.';
+    ? t('waitInteraction') : t('loadFailed');
 }
 
 function stopMusic() {
@@ -195,7 +215,7 @@ document.addEventListener('pointerdown', firstInteraction);
 document.addEventListener('keydown', firstInteraction);
 
 function navigate(focus = true) {
-  const requested = location.hash.slice(1) || 'accueil';
+  const requested = location.hash.slice(1) || config.homePage || 'accueil';
   if (requested === 'contenu') { $('contenu').focus(); return; }
   const page = pages.includes(requested) ? requested : 'accueil';
   if (!pages.includes(requested)) history.replaceState(null, '', '#accueil');
@@ -209,7 +229,7 @@ function navigate(focus = true) {
     const heading = $(page).querySelector('h2');
     const target = page === 'accueil' && previous !== 'accueil'
       ? document.querySelector(`.menu-button[href="#${previous}"]`) : heading;
-    target.focus({ preventScroll: true });
+    (target || heading).focus({ preventScroll: true });
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
 }
@@ -232,8 +252,9 @@ $('copy-discord').addEventListener('click', async () => {
   try {
     if (!navigator.clipboard) throw new Error('Clipboard unavailable');
     await navigator.clipboard.writeText(link);
-    $('clipboard-status').textContent = 'Lien du serveur Discord copié.';
-  } catch { $('clipboard-status').textContent = `Lien à copier : ${link}`; }
+    clipboardState = { key: 'copied' };
+    $('clipboard-status').textContent = t('copied');
+  } catch { clipboardState = { key: 'copyManually', values: { url: link } }; $('clipboard-status').textContent = t('copyManually', { url: link }); }
 });
 
 try {
@@ -244,9 +265,96 @@ try {
     localStorage.setItem('trimViewCount', String(count));
     localStorage.setItem('trimHasVisited', 'true');
   }
-  $('visitor-count').textContent = `${count.toLocaleString('fr-FR')} visite${count > 1 ? 's' : ''} enregistrée${count > 1 ? 's' : ''} sur ce navigateur.`;
-} catch { $('visitor-count').textContent = 'Compteur local indisponible.'; }
+  visitCount = count;
+} catch { visitCount = null; }
+
+function applyLanguage() {
+  document.documentElement.lang = language;
+  profileName = config.name || t('defaultName');
+  document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = t(element.dataset.i18n); });
+  document.querySelectorAll('[data-profile-name]').forEach(element => { element.textContent = profileName; });
+  const heading = $('site-title');
+  if (config.title) heading.textContent = config.title;
+  else {
+    const [before, after] = (strings.settingsOf || "{name}'s Settings").split('{name}');
+    const name = document.createElement('span'); name.dataset.profileName = 'true'; name.textContent = profileName;
+    heading.replaceChildren(document.createTextNode(before), name, document.createTextNode(after || ''));
+  }
+  $('site-domain').textContent = config.domain || t('personalSite');
+  $('language-select').value = language;
+  titles = { accueil: t('home'), profil: config.sectionTitles.profil || t('profile'), reseaux: config.sectionTitles.reseaux || t('networks'), audio: config.sectionTitles.audio || t('audio') };
+  for (const [id, key] of [['profil', 'profile-title'], ['reseaux', 'networks-title'], ['audio', 'audio-title']]) $(key).textContent = titles[id];
+  const custom = renderPages(config, t, language, setIconImage);
+  for (const [id, page] of custom) titles[id] = page.title;
+  pages = ['accueil', ...['profil', 'reseaux', 'audio'].filter(id => config.sections[id] !== false), ...custom.keys()];
+  const menu = document.querySelector('.menu-grid');
+  menu.setAttribute('aria-label', t('categories'));
+  const buttons = new Map([...menu.querySelectorAll('a')].map(button => [button.getAttribute('href').slice(1), button]));
+  for (const [id, button] of buttons) {
+    button.hidden = !pages.includes(id);
+    const label = button.lastElementChild; label.textContent = titles[id];
+    if (id === 'audio' && !config.sectionTitles.audio) {
+      const [word, ...rest] = t('audio').split(' '); label.replaceChildren(document.createTextNode(word), document.createElement('br'), document.createTextNode(' ' + rest.join(' ')));
+    }
+  }
+  for (const id of new Set([...config.menuOrder, ...buttons.keys()])) if (buttons.has(id)) menu.append(buttons.get(id));
+  renderProfile(config, t, language); renderCredits(config, t);
+  $('music-title').textContent = musicUrl ? config.musicTitle || t('personalMusic') : t('noMusic');
+  $('audio-note').textContent = t(musicUrl ? 'startNote' : 'noMusicNote');
+  $('links-note').textContent = t($('social-links').children.length ? 'externalLinks' : 'emptyLinks');
+  $('visitor-count').textContent = visitCount === null ? t('counterUnavailable') : t('visits', { count: visitCount.toLocaleString(language) });
+  $('profile-image').alt = `Avatar · ${profileName}`;
+  if (!$('asset-status').hidden && !configurationError) $('asset-status').textContent = t('assetError');
+  $('storage-note').textContent = t(storageAvailable ? 'stored' : 'notStored');
+  if (currentRelease) $('update-version').textContent = t('version', { version: currentRelease.version });
+  if (updateStatusKey) $('update-status').textContent = t(updateStatusKey);
+  if (clipboardState) $('clipboard-status').textContent = t(clipboardState.key, clipboardState.values);
+  updateAudio(); navigate(false);
+}
+$('language-select').addEventListener('change', async event => {
+  const requested = event.target.value;
+  try {
+    const loaded = await loadDictionary(requested); language = loaded.language; strings = loaded.strings;
+    try { localStorage.setItem('trimLanguage', language); } catch {}
+    $('language-status').hidden = !loaded.fallback; applyLanguage();
+    $('language-status').textContent = loaded.fallback ? t('translationUnavailable') : '';
+  } catch { $('language-status').hidden = false; $('language-status').textContent = t('translationUnavailable'); }
+});
+
+async function checkUpdates(manual = false) {
+  if (!config.updates.enabled) { $('check-updates').hidden = true; return; }
+  const now = Date.now(); let cache;
+  try { cache = JSON.parse(localStorage.getItem('trimUpdateCache') || 'null'); } catch {}
+  const status = key => { updateStatusKey = key; $('update-status').textContent = t(key); };
+  if (manual) { $('update-status').hidden = false; status('checkingUpdates'); }
+  try {
+    let release;
+    if (cache?.nextCheck > now) { if (cache.error) { const error = new Error('Cached update failure.'); error.retryAt = cache.nextCheck; throw error; } release = cache.release; }
+    else {
+      release = await latestRelease();
+      try { localStorage.setItem('trimUpdateCache', JSON.stringify({ nextCheck: now + Math.max(24, Number(config.updates.intervalHours) || 24) * 3600000, release })); } catch {}
+    }
+    const metadata = await fetch(new URL('./version.json', import.meta.url)).then(response => { if (!response.ok) throw new Error('Version unavailable.'); return response.json(); });
+    if (release && compareVersions(release.version, metadata.version) > 0) {
+      currentRelease = release; $('view-update').href = releaseUrl(release); $('update-version').textContent = t('version', { version: release.version });
+      let dismissed; try { dismissed = localStorage.getItem('trimDismissedUpdate'); } catch {}
+      $('update-notice').hidden = !manual && dismissed === release.version;
+      if (manual) status('updateAvailable');
+    } else if (manual) status(release ? 'upToDate' : 'noRelease');
+  } catch (error) {
+    try { localStorage.setItem('trimUpdateCache', JSON.stringify({ nextCheck: error.retryAt || now + 3600000, release: null, error: true })); } catch {}
+    if (manual) status('updateError');
+  }
+}
+$('check-updates').addEventListener('click', () => void checkUpdates(true));
+$('dismiss-update').addEventListener('click', () => {
+  $('update-notice').hidden = true;
+  try { if (currentRelease) localStorage.setItem('trimDismissedUpdate', currentRelease.version); } catch {}
+});
 
 savePreferences();
-updateAudio();
-navigate(false);
+applyLanguage();
+if (configurationError) { $('asset-status').hidden = false; $('asset-status').textContent = t('configError'); }
+if (locale.fallback) { $('language-status').hidden = false; $('language-status').textContent = t('translationUnavailable'); }
+void checkUpdates();
+if (config.updates.enabled) window.setInterval(() => void checkUpdates(), 3600000);

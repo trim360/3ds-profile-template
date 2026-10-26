@@ -1,0 +1,14 @@
+{
+  "schemaVersion":2,
+  "name":"Example profile",
+  "pronouns":"they/them",
+  "title":"",
+  "about":"This is example content. Replace it with your own introduction.",
+  "bio":"",
+  "interests":[],
+  "projects":[],
+  "links":[],
+  "music":"",
+  "credits":[],
+  "pages":[]
+}

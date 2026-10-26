@@ -5,3 +5,16 @@
 Thumbs.db
 node_modules/
 *.log
+user-content/
+backups/
+dist/
+.release/
+.build-*/
+.setup.lock
+.update-cache.json
+.update-journal.json
+.write-test-*
+*.mp3
+*.ogg
+*.wav
+*.m4a

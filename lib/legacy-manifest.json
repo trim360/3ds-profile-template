@@ -1,0 +1,23 @@
+{
+  "version": "0.0.0",
+  "commit": "1ff7cfa",
+  "files": {
+    ".gitignore": "b101b95629b75fae33cec4196f441e6094be6f3d36f84a5acbee60a62de5ae5f",
+    "DESIGN.md": "a722752dc0f98700e2a2f491cb1dd24dd1371f08f0095c7e5324f7ff6ffc47ec",
+    "Dockerfile": "29ce0206bf4ede3ab036709841ecf92c48aba640d6b696b570ca2f98e6d5099f",
+    "LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "LICENSES/MIT-original.txt": "845805085c9b7981afd69607c94ec35dfe26eb7d6ce5326d823520c1b7368a7a",
+    "NOTICE": "596201bddd15f44275bca21d015af6764977904804c9ada7d44695d9a4b2114d",
+    "README.md": "4c7e2117ee2ebff5c9c2f24e10254ec544e75416e81ffdbd713f9a548e8257bb",
+    "assets/audio.svg": "23e5f95afa43840a521dfa6ae28bab12c8f43a7a110e11ea392fecf464b42b8f",
+    "assets/avatar.svg": "18c236a23fcdabb44975471927a58c1c946e2722c34b04687cad5e0f0d877545",
+    "assets/network.svg": "0dc0b6fcdb58cfb9b860c070c4cefa40cc732e071bfa63bd8fe4408830b5e5f7",
+    "assets/profile.svg": "49291c10e22f33c70477fbade4ced40f02f4cc79f014fd0f9418605d5555d28f",
+    "assets/settings.svg": "3a1ca0a980e24c96d30c0709326f15a66e972398ff85cadf915e7d0d99f82ff6",
+    "docker-compose.yml": "c12935cffba3980752569165f3af0e93734c38c6470846d847ad95805b140b2c",
+    "index.html": "a0756decc369e53e9a74fd148e59e73059ebc2cdc2405e9ebed2df1e7cd9d349",
+    "nginx.conf": "04d8af7e73c92f043370d2df249f289ad28f6777db25a68195216564636b79b3",
+    "script.js": "5ba2dc631ac453c2afa954e42ad0636d3342f52ed85e466eb878bf12b6b5737c",
+    "style.css": "9ed56901c8d9a73765686a001cf9565714d1d80200cb14b3ef9b177c0c9ee7d4"
+  }
+}

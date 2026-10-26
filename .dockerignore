@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+backups
+dist
+.release
+.build-*
+.setup.lock
+.update-cache.json
+.update-journal.json
+tests
