@@ -2,6 +2,8 @@
 
 [English](#english) · [Français](#français)
 
+[Live showcase / Vitrine en ligne](https://3ds.kirbytrim.buzz/) · [Demo / Démo](https://3ds.kirbytrim.buzz/demo/)
+
 ## English
 
 This folder is the project presentation website. It does not replace or modify

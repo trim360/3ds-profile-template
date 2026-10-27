@@ -1,5 +1,24 @@
 # Showcase verification
 
+## Authorized public deployment, 27 October 2026
+
+- Published at `https://3ds.kirbytrim.buzz/`, demo at `/demo/`, through the
+  existing `trim-server` Cloudflare Tunnel. Added only this hostname and its
+  proxied CNAME; existing applications and DNS records were retained.
+- Dedicated showcase container rebuilt from the tested visual refinement;
+  healthy after deployment. Previous files and a compressed backup retained
+  on Debian. The personal-site container and its source were not edited.
+- All **37 public exported files** fetched over HTTPS through Cloudflare and
+  compared byte-for-byte with the local build. JavaScript MIME types, canonical
+  URL, sitemap, real demo, missing asset 404 and WAV range response 206 passed.
+- Six showcase tests passed before publishing; production export uses the
+  approved URL via `WEBSITE_URL`, without editing `.env` or changing the default
+  configurable URL used by forks.
+- Added website/demo links to both READMEs and the GitHub repository homepage.
+  The original template README is intentionally changed for these links only;
+  its hash in `template-manifest.json` is updated. Client code, setup, data,
+  release version and existing release artifacts remain unchanged.
+
 ## Visual-only refinement, 27 October 2026
 
 Compared with commit `51d98e3`. No deployment, push, DNS change or server write

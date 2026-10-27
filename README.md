@@ -2,6 +2,8 @@
 
 [English](#english) · [Français](#français)
 
+[Project website / Site du projet](https://3ds.kirbytrim.buzz/) · [Live demo / Démo](https://3ds.kirbytrim.buzz/demo/)
+
 ## English
 
 A personal website template created by **Trim**, inspired by the Nintendo 3DS
