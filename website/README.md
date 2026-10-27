@@ -64,6 +64,11 @@ but cannot write the static configuration on the server. No accounts or backend.
 
 ### Production export
 
+For Trim's Debian server, `compose.yaml` and `nginx.conf` serve a prebuilt
+`dist/` using `docker compose -f website/compose.yaml up -d --wait` from the
+repository root. Port 8098 binds only to the two configured LAN/Tailscale
+addresses; adapt them for another host. No domain or TLS is configured.
+
 Deploy only the **contents of `website/dist/`**. That folder is self-contained,
 including the demo. Paths are relative and work in a hosting subdirectory.
 Do not deploy the repository root or overwrite a personal-site installation.
@@ -154,6 +159,11 @@ n’est copiée. Les visiteurs ne peuvent pas enregistrer de configuration sur l
 serveur statique. Aucun compte ni backend.
 
 ### Héberger séparément
+
+Sur le serveur Debian de Trim, `compose.yaml` et `nginx.conf` servent un `dist/`
+déjà construit : `docker compose -f website/compose.yaml up -d --wait` depuis
+la racine du dépôt. Le port 8098 écoute uniquement sur les deux adresses locales
+et Tailscale configurées ; adapte-les pour un autre hôte. Aucun domaine ni TLS.
 
 Publie uniquement le **contenu de `website/dist/`**, qui contient aussi la démo.
 Les chemins relatifs fonctionnent en sous-dossier. Ne publie pas la racine du dépôt
