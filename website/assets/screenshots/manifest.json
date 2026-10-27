@@ -1,0 +1,37 @@
+{
+  "home": {
+    "width": 1032,
+    "height": 834,
+    "sha256": "a18524d7eb7325e1a126f88b234b519a47bc043a01e5db862583b896066c2351",
+    "bytes": 39124,
+    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+  },
+  "profile": {
+    "width": 1033,
+    "height": 898,
+    "sha256": "dc57c9a4bb08e066d2c949f6d9376be2a6f572291d262915a261d1d2006fa99c",
+    "bytes": 37776,
+    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+  },
+  "sona": {
+    "width": 1033,
+    "height": 972,
+    "sha256": "4c80fb8dd01e9d0e9157e0395e50b531ea652da0396e10eea48a4e1cb6be4f09",
+    "bytes": 32400,
+    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+  },
+  "audio": {
+    "width": 1032,
+    "height": 713,
+    "sha256": "8b1a4379b8ec7ed62a4228c0d5cc5cd57dc5247f94999917866b44fd2f141171",
+    "bytes": 34016,
+    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+  },
+  "gallery": {
+    "width": 1033,
+    "height": 895,
+    "sha256": "62cf5a0afd456228ded2c7fd5417368a38edcd72cf3ad1a481887f8b8c2f90ee",
+    "bytes": 39080,
+    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+  }
+}

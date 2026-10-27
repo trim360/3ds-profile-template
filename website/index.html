@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{pageTitle}}</title><meta name="description" content="{{metaDescription}}">
+  <meta name="theme-color" content="#faf8f1"><meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{projectName}}"><meta property="og:title" content="{{pageTitle}}"><meta property="og:description" content="{{metaDescription}}">
+  <meta property="og:image" content="assets/screenshots/home.webp"><meta property="og:image:alt" content="{{shot.home.alt}}">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{{pageTitle}}"><meta name="twitter:description" content="{{metaDescription}}">
+  <meta name="twitter:image" content="assets/screenshots/home.webp"><meta name="twitter:image:alt" content="{{shot.home.alt}}">
+  <!-- canonical -->
+  <link rel="icon" href="assets/settings-3ds.png" type="image/png"><link rel="stylesheet" href="style.css">
+  <!-- locale bootstrap -->
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#content" data-i18n="skip">{{skip}}</a>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="#home"><img src="assets/settings-3ds.png" width="32" height="32" alt=""><span>3DS <span class="brand-rest">Personal Website</span></span></a>
+      <button class="menu-toggle" id="menu-toggle" aria-controls="navigation" aria-expanded="false" data-i18n="menu">{{menu}}</button>
+      <nav id="navigation" aria-label="{{navLabel}}">
+        <a href="#home" data-i18n="home">{{home}}</a><a href="#features" data-i18n="features">{{features}}</a><a href="#screenshots" data-i18n="screenshots">{{screenshots}}</a><a href="#installation" data-i18n="installation">{{installation}}</a><a href="#faq" data-i18n="faq">{{faq}}</a><a href="{{link.repository}}" data-link="repository" data-i18n="github">{{github}}</a>
+      </nav>
+      <label class="language-label"><span class="sr-only" data-i18n="language">{{language}}</span><select id="language"><option value="en">EN</option><option value="fr">FR</option></select></label>
+    </div>
+  </header>
+  <main id="content">
+    <section class="hero section" id="home" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title" data-i18n="heroTitle">{{heroTitle}}</h1>
+        <p class="intro" data-i18n="heroDescription">{{heroDescription}}</p>
+        <div class="actions"><a class="button primary" href="{{link.demo}}" data-link="demo" data-i18n="liveDemo">{{liveDemo}}</a><a class="button" href="#installation" data-i18n="getStarted">{{getStarted}}</a></div>
+        <a class="text-link" href="{{link.repository}}" data-link="repository" data-i18n="viewGithub">{{viewGithub}}</a>
+        <p class="fine-print" data-i18n="heroNote">{{heroNote}}</p>
+      </div>
+      <figure class="hero-preview" data-reveal>
+        <div class="preview-top"><span data-i18n="previewLabel">{{previewLabel}}</span><span>v{{version}}</span></div>
+        <button class="screenshot-button" data-shot="home" aria-label="{{shot.home.title}}"><img src="assets/screenshots/home.webp" width="1020" height="850" alt="{{shot.home.alt}}" data-alt="shot.home.alt" fetchpriority="high"></button>
+        <figcaption data-i18n="previewNote">{{previewNote}}</figcaption>
+      </figure>
+    </section>
+    <section class="section features" id="features" aria-labelledby="features-title">
+      <div class="section-heading"><h2 id="features-title" data-i18n="featuresTitle">{{featuresTitle}}</h2><p data-i18n="featuresIntro">{{featuresIntro}}</p></div>
+      <div class="tour-tabs" role="tablist" aria-label="{{tourLabel}}" id="tour-tabs">
+        <button role="tab" id="tour-profile" aria-selected="true" aria-controls="tour-panel" data-tour="profile" data-i18n="tab.profile">{{tab.profile}}</button>
+        <button role="tab" id="tour-sona" aria-selected="false" aria-controls="tour-panel" tabindex="-1" data-tour="sona" data-i18n="tab.sona">{{tab.sona}}</button>
+        <button role="tab" id="tour-audio" aria-selected="false" aria-controls="tour-panel" tabindex="-1" data-tour="audio" data-i18n="tab.audio">{{tab.audio}}</button>
+      </div>
+      <div class="tour-panel" id="tour-panel" role="tabpanel" aria-labelledby="tour-profile">
+        <button class="tour-image screenshot-button" data-shot="profile" id="tour-image-button"><img id="tour-image" src="assets/screenshots/profile.webp" width="1020" height="850" loading="lazy" decoding="async" alt="{{shot.profile.alt}}"></button>
+        <div class="tour-copy"><h3 id="tour-title">{{tour.profile.title}}</h3><p id="tour-description">{{tour.profile.description}}</p><ul id="tour-points"><li>{{tour.profile.point1}}</li><li>{{tour.profile.point2}}</li><li>{{tour.profile.point3}}</li></ul></div>
+      </div>
+      <div class="capabilities">
+        <article><h3 data-i18n="languageTitle">{{languageTitle}}</h3><p data-i18n="languageBody">{{languageBody}}</p></article>
+        <article><h3 data-i18n="setupTitle">{{setupTitle}}</h3><p data-i18n="setupBody">{{setupBody}}</p></article>
+        <article><h3 data-i18n="updatesTitle">{{updatesTitle}}</h3><p data-i18n="updatesBody">{{updatesBody}}</p></article>
+      </div>
+    </section>
+    <section class="section shots" id="screenshots" aria-labelledby="shots-title">
+      <div class="section-heading"><h2 id="shots-title" data-i18n="shotsTitle">{{shotsTitle}}</h2><p data-i18n="shotsIntro">{{shotsIntro}}</p></div>
+      <div class="shot-grid">
+        <figure><button class="screenshot-button" data-shot="home"><img src="assets/screenshots/home.webp" width="1020" height="850" loading="lazy" decoding="async" alt="{{shot.home.alt}}" data-alt="shot.home.alt"></button><figcaption><h3 data-i18n="shot.home.title">{{shot.home.title}}</h3><p data-i18n="shot.home.caption">{{shot.home.caption}}</p></figcaption></figure>
+        <figure><button class="screenshot-button" data-shot="profile"><img src="assets/screenshots/profile.webp" width="1020" height="850" loading="lazy" decoding="async" alt="{{shot.profile.alt}}" data-alt="shot.profile.alt"></button><figcaption><h3 data-i18n="shot.profile.title">{{shot.profile.title}}</h3><p data-i18n="shot.profile.caption">{{shot.profile.caption}}</p></figcaption></figure>
+        <figure><button class="screenshot-button" data-shot="sona"><img src="assets/screenshots/sona.webp" width="1020" height="850" loading="lazy" decoding="async" alt="{{shot.sona.alt}}" data-alt="shot.sona.alt"></button><figcaption><h3 data-i18n="shot.sona.title">{{shot.sona.title}}</h3><p data-i18n="shot.sona.caption">{{shot.sona.caption}}</p></figcaption></figure>
+        <figure><button class="screenshot-button" data-shot="audio"><img src="assets/screenshots/audio.webp" width="1020" height="850" loading="lazy" decoding="async" alt="{{shot.audio.alt}}" data-alt="shot.audio.alt"></button><figcaption><h3 data-i18n="shot.audio.title">{{shot.audio.title}}</h3><p data-i18n="shot.audio.caption">{{shot.audio.caption}}</p></figcaption></figure>
+        <figure><button class="screenshot-button" data-shot="gallery"><img src="assets/screenshots/gallery.webp" width="1020" height="850" loading="lazy" decoding="async" alt="{{shot.gallery.alt}}" data-alt="shot.gallery.alt"></button><figcaption><h3 data-i18n="shot.gallery.title">{{shot.gallery.title}}</h3><p data-i18n="shot.gallery.caption">{{shot.gallery.caption}}</p></figcaption></figure>
+      </div>
+    </section>
+    <section class="demo-band" id="demo" aria-labelledby="demo-title"><div class="section demo-inner"><div><h2 id="demo-title" data-i18n="demoTitle">{{demoTitle}}</h2><p data-i18n="demoBody">{{demoBody}}</p></div><div><a class="button light" href="{{link.demo}}" data-link="demo" data-i18n="tryDemo">{{tryDemo}}</a><p class="fine-print" data-i18n="demoNote">{{demoNote}}</p></div></div></section>
+    <section class="section installation" id="installation" aria-labelledby="install-title">
+      <div class="install-intro"><h2 id="install-title" data-i18n="installTitle">{{installTitle}}</h2><p data-i18n="installIntro">{{installIntro}}</p><a class="text-link" href="{{link.node}}" data-link="node" data-i18n="nodeLink">{{nodeLink}}</a><div class="actions"><a class="button primary download" href="{{link.download}}" data-link="download">Download v{{version}}</a></div></div>
+      <div class="install-instructions">
+        <div class="os-tabs" role="tablist" aria-label="{{osLabel}}" id="os-tabs"><button id="os-windows" role="tab" aria-selected="true" aria-controls="install-panel" data-os="windows" data-i18n="windows">{{windows}}</button><button id="os-linux" role="tab" aria-selected="false" aria-controls="install-panel" tabindex="-1" data-os="linux" data-i18n="linux">{{linux}}</button></div>
+        <div id="install-panel" role="tabpanel" aria-labelledby="os-windows"><ol><li data-install-step="1">{{windowsStep1}}</li><li data-install-step="2">{{windowsStep2}}</li><li data-install-step="3">{{windowsStep3}}</li><li data-install-step="4">{{windowsStep4}}</li><li data-install-step="5">{{windowsStep5}}</li></ol>
+          <p class="command-label" data-i18n="runCommand">{{runCommand}}</p><div class="command"><code id="install-command">.\setup.bat</code><button id="copy-command" data-i18n="copy">{{copy}}</button></div><p id="copy-status" class="feedback" role="status"></p>
+        </div><a class="text-link" href="{{link.docs}}" data-link="docs" data-i18n="docs">{{docs}}</a>
+      </div><p class="host-note" data-i18n="hostNote">{{hostNote}}</p>
+    </section>
+    <section class="section open-source" id="open-source" aria-labelledby="source-title"><div><h2 id="source-title" data-i18n="sourceTitle">{{sourceTitle}}</h2><p data-i18n="sourceBody">{{sourceBody}}</p></div><nav aria-label="Open source" class="source-links"><a href="{{link.repository}}" data-link="repository" data-i18n="repository">{{repository}}</a><a href="{{link.releases}}" data-link="releases" data-i18n="releases">{{releases}}</a><a href="{{link.issues}}" data-link="issues" data-i18n="issues">{{issues}}</a><a href="{{link.docs}}" data-link="docs" data-i18n="docs">{{docs}}</a></nav></section>
+    <section class="section community" id="community" aria-labelledby="community-title"><h2 id="community-title" data-i18n="communityTitle">{{communityTitle}}</h2><div id="community-list"><article><h3><a href="https://weizkule.be">weizkule</a></h3><p data-i18n="communityCredit">{{communityCredit}}</p></article></div><p class="fine-print" data-i18n="communityInvite">{{communityInvite}}</p></section>
+    <section class="section faq" id="faq" aria-labelledby="faq-title"><h2 id="faq-title" data-i18n="faq">{{faq}}</h2><div class="questions">
+      <details><summary data-i18n="q1">{{q1}}</summary><p data-i18n="a1">{{a1}}</p></details><details><summary data-i18n="q2">{{q2}}</summary><p data-i18n="a2">{{a2}}</p></details><details><summary data-i18n="q3">{{q3}}</summary><p data-i18n="a3">{{a3}}</p></details><details><summary data-i18n="q4">{{q4}}</summary><p data-i18n="a4">{{a4}}</p></details><details><summary data-i18n="q5">{{q5}}</summary><p data-i18n="a5">{{a5}}</p></details><details><summary data-i18n="q6">{{q6}}</summary><p data-i18n="a6">{{a6}}</p></details><details><summary data-i18n="q7">{{q7}}</summary><p data-i18n="a7">{{a7}}</p></details>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="section footer-inner"><div><strong>{{projectName}}</strong><p><span data-i18n="creator">{{creator}}</span> <a id="creator-link" href="https://kirbytrim.buzz/">Trim</a>.</p></div><nav aria-label="Project links" id="footer-nav"><a href="{{link.repository}}" data-link="repository" data-i18n="github">{{github}}</a><a href="{{link.docs}}" data-link="docs" data-i18n="docs">{{docs}}</a><a href="{{link.license}}" data-link="license" data-i18n="license">{{license}}</a><a href="{{link.notices}}" data-link="notices" data-i18n="notices">{{notices}}</a><a href="#community" data-i18n="communityFooter">{{communityFooter}}</a></nav><p class="legal" data-i18n="nonAffiliation">{{nonAffiliation}}</p></div></footer>
+  <p id="language-status" class="language-status" role="status" hidden></p>
+  <dialog id="viewer" aria-labelledby="viewer-heading"><div class="viewer-head"><h2 id="viewer-heading" data-i18n="viewerTitle">{{viewerTitle}}</h2><button id="close-viewer" autofocus data-i18n="close">{{close}}</button></div><div class="viewer-image"><img id="viewer-image" alt=""><p id="viewer-status" role="status"></p></div><div class="viewer-controls"><button id="previous-shot" data-i18n="previous">{{previous}}</button><p id="viewer-caption" aria-live="polite"></p><button id="next-shot" data-i18n="next">{{next}}</button></div></dialog>
+  <noscript><p class="section" data-i18n="noScript">{{noScript}}</p><style>.screenshot-button{cursor:default}.nav-wrap{flex-wrap:wrap}#navigation{display:flex;position:static;flex-wrap:wrap;order:4;width:100%}.menu-toggle{display:none}</style></noscript>
+</body>
+</html>
