@@ -1,5 +1,65 @@
 # Showcase verification
 
+## Visual-only refinement, 27 October 2026
+
+Compared with commit `51d98e3`. No deployment, push, DNS change or server write
+was performed for this refinement. The previously deployed showcase was viewed
+read-only for the before screenshots. The personal 3DS site is unchanged.
+
+- Only `style.css`, presentation-only `data-reveal` attributes in `index.html`,
+  `DESIGN.md` and this report changed. Removing those attributes makes the HTML
+  exactly equal to the baseline, including all text, section order, links,
+  accessibility attributes and controls. JavaScript, dictionaries, screenshots,
+  configuration, setup, build and deployment files have no diff.
+- `git diff 51d98e3 -- . ':(exclude)website'`: empty. The six existing build
+  tests pass, including hashes of all 43 protected original template files.
+- Reference website and its HTML/CSS/JS/fonts/README/license inspected. Plain
+  CSS bevels, rounded hierarchy and progressive motion informed the treatment;
+  no reference code, fonts, illustrations or other assets were copied.
+  License/dependency details and individual design reasons are in `DESIGN.md`.
+- Chromium EN and FR at 320, 390, 640, 768, 1024 and 1280 CSS pixels: all 12
+  checks have `scrollWidth === clientWidth`, and all visible interactive
+  targets measure at least 44 by 44 pixels. Menu is present below 980 px.
+- Three feature tabs show their real matching images and descriptions. Arrow
+  keys move both selection and focus; the computed focus outline is solid.
+- Windows and Linux installation show five matching instructions. Native copy
+  clicks put exactly `.\setup.bat` and `bash setup.sh` in the clipboard.
+- Five gallery buttons show the correct dialog captions and alternatives.
+  Hero enlargement, previous/next, close and Escape work; Escape restores the
+  hero screenshot button's focus. All seven FAQ answers open and close with
+  Enter. Native FAQ behavior and its semantics are unchanged.
+- Mobile Menu opens; Installation navigation updates the hash and closes it;
+  Escape closes it and focuses Menu. Desktop Features/Captures/FAQ links and
+  the hero's real `/demo/` destination were exercised. The demo finishes
+  initialization with the `Demo profile` title and profile navigation.
+- Ten configured external destinations returned HTTP 200 using HEAD requests.
+  Browser error/warning log was empty during the recorded normal walkthrough.
+- Existing observer reveals the feature image when it enters view. Computed
+  hero entry is 0.5 seconds with one iteration. CSS transitions affect opacity,
+  transform, color and shallow button depth; no perpetual motion or scroll
+  interception was added. Reduced-motion CSS disables animations/transitions;
+  the existing JavaScript preference guard is unchanged.
+- Actual static showcase size: **323,904 bytes**, up **3,119 bytes**. CSS:
+  **18,496 bytes**; JavaScript unchanged at **9,387 bytes**; HTML **27,438 bytes**.
+  No new dependency, font request or image. Existing screenshot hashes pass.
+- Contrast computations: muted text/ivory **5.73:1**, heading olive/ivory
+  **6.47:1**, button text/lightest orange **5.10:1**, selected-tab text/olive
+  **6.81:1**, frame caption/darkest rim **5.87:1**, demo text/dark olive
+  **9.02:1**, component border/cream **3.39:1**, focus/paper **7.15:1**.
+- Real before/after desktop and mobile captures, plus Features, Gallery and
+  Installation views, are saved in the task's `outputs/showcase-visual-refresh/`
+  folder. Desktop comparison uses the same 1280 by 900 viewport; phone uses
+  390 by 844. Native screenshots exclude browser scrollbar/chrome regions.
+
+Limits: no physical phone, screen reader, Safari/Firefox, actual 200% browser
+zoom or Lighthouse run. Reduced-motion preference was inspected in source,
+not toggled at OS level. Missing-file recovery was tested in the original
+audit below; it was not injected again because its scripts remain unchanged.
+The full R-01 through R-38 and C-1 through C-5 gate below was rechecked against
+this refinement and the retained evidence. All entries remain PASS.
+
+## Initial implementation evidence (before the separate deployment)
+
 27 October 2026. Local implementation only. No push, deployment, domain change,
 server modification or edit to the personal template. All new files are under
 `website/`; `git diff HEAD -- . ':(exclude)website'` is empty.
@@ -55,7 +115,7 @@ subtle 3DS details. **ENERGY 2 / RHYTHM 3 / MOTION 2**.
 
 - R-01 PASS: flat ivory/olive surfaces; small hardware-like bevels serve button affordance, no decorative gradient field.
 - R-02 PASS: showcase UI dictionaries contain no em dash.
-- R-03 PASS: six viewport widths without overflow, with a separate mobile menu and stacked sections.
+- R-03 PASS: all twelve EN/FR viewport checks pass without overflow or targets smaller than 44 by 44 pixels; mobile menu and stacked sections exercised.
 - R-04 PASS: original settings wrench and real project screenshots; no generic feature-icon library.
 - R-05 PASS: feature tour, supporting text, gallery, demo band, installation and FAQ have content-specific compositions.
 - R-06 PASS: Trebuchet headings recall friendly console typography; system sans supports readable prose; mono only for executable commands.
@@ -71,13 +131,13 @@ subtle 3DS details. **ENERGY 2 / RHYTHM 3 / MOTION 2**.
 - R-16 PASS: copy describes available features; no invented marketing superlatives.
 - R-17 PASS: no GitHub adoption/download counters or unsourced statistics.
 - R-18 PASS: no testimonials.
-- R-19 PASS: one-time screenshot reveal and short control transitions; no perpetual animation, auto-carousel or scroll lock; reduced-motion branch present.
+- R-19 PASS: seven images reuse one-time reveals; hero entry computes to 500 ms, one iteration; short native-answer transitions, no loop or scroll lock, reduced-motion branch present.
 - R-20 PASS: actual cream 3DS menus and original wrench identify this project; no generic product placeholders.
 - R-21 PASS: light ivory derives from the retained template and requested console character; dark olive is a single demo section, not forced dark mode.
 - R-22 PASS: real screenshots only; placeholder avatar is explicitly labelled inside the real demo.
 - R-23 PASS: user requested original screenshots and project branding; source manifests record real captures and Nintendo notices remain visible.
 - R-24 PASS: every internal anchor and local destination checked; ten external URLs returned 200.
-- R-25 PASS: computed text ratios exceed 4.5:1; measured component boundary exceeds 3:1.
+- R-25 PASS: updated text pairs compute to at least 5.10:1; border/cream 3.39:1 and focus/paper 7.15:1; exact pairings recorded above.
 - R-26 PASS: tabs, menu, dialog, copy, FAQ and navigation exercised; no fake download or demo button.
 - R-27 PASS: real image loading/error, translation fallback and clipboard fallback paths exist; missing-file states and recovery exercised.
 - R-28 PASS: seven questions directly address this project's setup, licensing, mobile, music, updates and contribution.
