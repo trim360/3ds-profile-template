@@ -26,7 +26,7 @@ export async function prepareRelease(root = ROOT) {
   const version = JSON.parse(await readFile(path.join(root, 'version.json'), 'utf8'));
   if (!/^\d+\.\d+\.\d+$/.test(version.version)) throw new Error('Stable semantic version required.');
   const tracked = execFileSync('git', ['-C', root, 'ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean);
-  if (tracked.some(file => /\.(mp3|ogg|wav|m4a)$/i.test(file) || file.startsWith('user-content/'))) throw new Error('Personal audio/user files are tracked by Git. .gitignore does not remove tracked history; review before release.');
+  if (tracked.some(file => /\.(mp3|ogg|wav|m4a)$/i.test(file) || file.startsWith('user-content/') || file.startsWith('.owner/'))) throw new Error('Personal audio/user files or private owner state are tracked by Git. Review before release.');
   const files = [];
   for (const file of tracked.filter(managedPath).sort()) {
     const source = await checkParents(root, file); if (!(await lstat(source)).isFile()) throw new Error('Release contains a non-regular file.');

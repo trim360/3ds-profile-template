@@ -1,5 +1,84 @@
 # Showcase verification
 
+## V2 deployed, 13 November 2026
+
+Public URL: https://3ds.kirbytrim.buzz/ ; settings: `/demo/#parametres`.
+Source checkout: `work/3ds-profile-template`; Debian build source:
+`/home/trim/3ds-profile-template-v2`. This task did not push a commit or publish
+a GitHub Release. The deployed, working V2 ZIP is linked from Installation.
+
+- Added the supplied original Bagu, cream/orange/red presentation, floating
+  glass navigation with a sliding active indicator, and real V2 demo screenshots.
+- Settings save theme, accent, language, readability, animations, button feedback,
+  music and volume locally. `#audio` remains compatible. Browser update controls
+  and polling were removed; the owner's setup/CLI updater is unchanged.
+- Deleted synthesized demo music. Deployment copies the existing supplied
+  `/home/trim/trim-site/assets/internet-settings-3ds.mp3` unchanged. The one player
+  waits for a gesture, loops, respects mute/volume, and pauses on page exit.
+  Default reusable builds are silent; personal music and Bagu are excluded from
+  the downloadable template and Git source.
+- Bagu SHA256: `6e4147958839d52b0cea63ed5ff2db19e74460cf2ceb0d51a795362f7a26a5d1`.
+  The deployed PNG matches the supplied file. The existing settings wrench is
+  also byte-identical to production before V2.
+- 28 Node tests passed on Windows and Debian: setup, icon imports, validation,
+  translations, builds, release checks, conflicts, recovery and rollback.
+- An actual archived 1.2.0 checkout accepted the actual 2.0.0 update payload on
+  Windows. Profile JSON, runtime configuration and user media remained identical;
+  its resulting static build included the new preferences module.
+- The downloaded V2 ZIP passed all 43 manifest hashes, configuration validation
+  and a static build after extraction on Windows. No npm dependencies were added.
+- 46 Chromium checks passed on the final public HTTPS deployment, with zero
+  page errors: navigation, tabs, all FAQ disclosures, screenshot dialog/focus,
+  languages, persisted settings, audio, page exit, keyboard volume, reduced
+  motion and 320/390/768/1440px overflow checks.
+- A separate touch-enabled 390px browser passed tap-to-play, native optional
+  feedback sound, sound disable and single-player checks. This is browser
+  emulation, not a physical phone test. Safari/Firefox were not tested.
+- Axe WCAG A/AA checks reported zero violations on home, demo menu, settings and
+  profile in classic/light/night themes (12 combinations). Manual screenshots
+  were inspected; two night contrast defects found during testing were fixed.
+- All 40 non-hidden public exported files matched the deployed build byte for
+  byte over HTTPS with normal certificate validation. MP3 Range returned 206;
+  private paths and POST were refused; the old generated WAV returned 404.
+- Recreated only `3ds-showcase`, retaining its pinned nginx image, read-only
+  mounts and network bindings. Container healthy; all other running container
+  IDs unchanged. No secrets, `.env`, DNS, tunnel or other service was modified.
+- Original pre-V2 backup:
+  `/home/trim/3ds-showcase/backups/v2-20261113T210221Z`.
+  Final deployment backup: `backups/v2-20261113T210524Z` under the same root.
+  Previous dist directories are retained for rollback.
+
+Evidence is retained in `outputs/3ds-v2-audit/` locally and
+`/home/trim/3ds-v2-audit/` on Debian. Final captures:
+`result-desktop.png`, `result-mobile.png`, plus public settings screenshots.
+
+### Anti-Slop delivery gate
+
+- R-02 PASS: new copy uses ordinary punctuation; historical credits retained.
+- R-03 PASS: both pages fit 320/390/768/1440px in recorded browser checks.
+- R-17/R-18/R-36/R-38 PASS: no invented statistics, testimonials, team or claims.
+- R-23 PASS: supplied Bagu and wrench preserved; screenshots show the actual demo.
+- R-24 PASS: all local showcase links resolve in build tests; demo/download work over HTTPS.
+- R-25 PASS: 12 theme/page combinations pass Axe; night text/select defects corrected.
+- R-26 PASS: 46 recorded controls/state checks plus touch/audio checks; no dummy actions.
+- R-27 PASS: existing translation, asset and audio error states retained; fallback tests pass.
+- R-28 PASS: FAQ covers this template's cost, hosting, audio, mobile and updates.
+- R-32 PASS: tabs use arrow keys, dialog restores focus, Escape closes menu/dialog,
+  volume uses native keyboard input, and focus outlines remain visible.
+- R-33 PASS: application features written directly in source, not external source patchers.
+- R-34 PASS: three themes checked; settings controls and profile text remain readable.
+- R-35 PASS: Windows/Debian builds, public click-through and container health verified.
+- R-37 PASS: Trim's supplied mock drives cream/orange/red, raised actions and Bagu;
+  ENERGY 2 / RHYTHM 3 / MOTION 2 recorded in DESIGN.md.
+- Purpose gate PASS: blur is confined to the floating navigation for context;
+  bevels echo existing 3DS controls; real screenshots demonstrate actual features.
+- Liveliness PASS: original mascot, settings wrench, console textures and selective
+  orange/red accents retain project identity; reduced motion removes transitions.
+- Craftsmanship C-1..C-5 PASS: preserved architecture/data/assets, real downloads,
+  persistent controls, translated error feedback, responsive states and measured evidence.
+
+Earlier verification entries below describe earlier versions, not this deployment.
+
 ## Authorized public deployment, 27 October 2026
 
 - Published at `https://3ds.kirbytrim.buzz/`, demo at `/demo/`, through the

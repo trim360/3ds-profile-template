@@ -2,9 +2,10 @@
 import { normalizeConfig, validateConfig, DEFAULT_ICONS } from './lib/config.mjs';
 import { chooseLanguage, loadDictionary, format } from './lib/translations.mjs';
 import { renderProfile, renderPages, renderCredits } from './lib/content.mjs';
-import { latestRelease, compareVersions, releaseUrl } from './lib/releases.mjs';
+import { loadPreferences, savePreferences as saveDisplayPreferences, applyPreferences } from './lib/preferences.mjs';
 const $ = (id) => document.getElementById(id);
 const music = $('music');
+let preferences;
 let configurationError = '';
 let config;
 try {
@@ -12,8 +13,10 @@ try {
   if (errors.length) throw new Error(errors.join(' '));
   config = normalizeConfig(window.PROFILE_CONFIG || {});
 } catch (error) { config = normalizeConfig(); configurationError = error.message; }
+preferences = loadPreferences({ ...config.appearance, sounds:config.audioDefaults.sounds });
+applyPreferences(preferences);
 let savedLanguage;
-try { savedLanguage = localStorage.getItem('trimLanguage'); } catch {}
+try { savedLanguage = preferences.language || localStorage.getItem('trimLanguage'); } catch {}
 let locale;
 try { locale = await loadDictionary(chooseLanguage(config.language, navigator.languages || [navigator.language], savedLanguage)); }
 catch { locale = { language: 'en', strings: {}, fallback: true }; }
@@ -102,16 +105,15 @@ const preferenceKey = 'trimAudioPreferences';
 let pages = ['accueil', 'profil', 'reseaux', 'audio'];
 let titles = {};
 let visitCount = null;
-let currentRelease = null;
-let updateStatusKey = '';
 let clipboardState = null;
 let currentPage = 'accueil';
-let enabled = Boolean(musicUrl);
-let volume = 0.25;
+let enabled = Boolean(musicUrl) && config.audioDefaults.enabled;
+let volume = config.audioDefaults.volume;
 let interacted = false;
 let state = 'idle';
 let requestNumber = 0;
 let storageAvailable = true;
+let installedVersion = '';
 
 try {
   const saved = JSON.parse(localStorage.getItem(preferenceKey) || 'null');
@@ -207,21 +209,22 @@ function firstInteraction(event) {
   if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
   if (event.ctrlKey || event.altKey || event.metaKey) return;
   interacted = true;
-  document.removeEventListener('pointerdown', firstInteraction);
+  document.removeEventListener('click', firstInteraction);
   document.removeEventListener('keydown', firstInteraction);
   if (!event.target.closest('[data-audio-control]')) void playMusic();
 }
-document.addEventListener('pointerdown', firstInteraction);
+document.addEventListener('click', firstInteraction);
 document.addEventListener('keydown', firstInteraction);
 
 function navigate(focus = true) {
-  const requested = location.hash.slice(1) || config.homePage || 'accueil';
+  const hash = location.hash.slice(1);
+  const requested = hash === 'parametres' ? 'audio' : hash || config.homePage || 'accueil';
   if (requested === 'contenu') { $('contenu').focus(); return; }
-  const page = pages.includes(requested) ? requested : 'accueil';
-  if (!pages.includes(requested)) history.replaceState(null, '', '#accueil');
+  const page = hash === 'parametres' ? 'audio' : pages.includes(requested) ? requested : 'accueil';
+  if (hash !== 'parametres' && !pages.includes(requested)) history.replaceState(null, '', '#accueil');
   const previous = currentPage;
   currentPage = page;
-  for (const id of pages) $(id).hidden = id !== page;
+  for (const id of new Set([...pages, 'audio'])) $(id).hidden = id !== page;
   $('back-button').hidden = page === 'accueil';
   $('home-indicator').hidden = page !== 'accueil';
   document.title = `${profileName} · ${titles[page]}`;
@@ -257,7 +260,9 @@ $('copy-discord').addEventListener('click', async () => {
   } catch { clipboardState = { key: 'copyManually', values: { url: link } }; $('clipboard-status').textContent = t('copyManually', { url: link }); }
 });
 
-try {
+function updateVisitCount() {
+visitCount = null;
+if (window.SitePrivacy?.has('audience')) try {
   const previous = Number.parseInt(localStorage.getItem('trimViewCount') || '0', 10);
   let count = Number.isSafeInteger(previous) && previous >= 0 ? previous : 0;
   if (!localStorage.getItem('trimHasVisited')) {
@@ -267,6 +272,11 @@ try {
   }
   visitCount = count;
 } catch { visitCount = null; }
+$('visitor-count').hidden = !window.SitePrivacy?.has('audience');
+$('visitor-count').textContent = visitCount === null ? t('counterUnavailable') : t('visits', { count: visitCount.toLocaleString(language) });
+}
+updateVisitCount();
+window.addEventListener('privacychange', updateVisitCount);
 
 function applyLanguage() {
   document.documentElement.lang = language;
@@ -282,7 +292,7 @@ function applyLanguage() {
   }
   $('site-domain').textContent = config.domain || t('personalSite');
   $('language-select').value = language;
-  titles = { accueil: t('home'), profil: config.sectionTitles.profil || t('profile'), reseaux: config.sectionTitles.reseaux || t('networks'), audio: config.sectionTitles.audio || t('audio') };
+  titles = { accueil: t('home'), profil: config.sectionTitles.profil || t('profile'), reseaux: config.sectionTitles.reseaux || t('networks'), audio: config.sectionTitles.audio || t('settings') };
   for (const [id, key] of [['profil', 'profile-title'], ['reseaux', 'networks-title'], ['audio', 'audio-title']]) $(key).textContent = titles[id];
   const custom = renderPages(config, t, language, setIconImage);
   for (const [id, page] of custom) titles[id] = page.title;
@@ -293,9 +303,6 @@ function applyLanguage() {
   for (const [id, button] of buttons) {
     button.hidden = !pages.includes(id);
     const label = button.lastElementChild; label.textContent = titles[id];
-    if (id === 'audio' && !config.sectionTitles.audio) {
-      const [word, ...rest] = t('audio').split(' '); label.replaceChildren(document.createTextNode(word), document.createElement('br'), document.createTextNode(' ' + rest.join(' ')));
-    }
   }
   for (const id of new Set([...config.menuOrder, ...buttons.keys()])) if (buttons.has(id)) menu.append(buttons.get(id));
   renderProfile(config, t, language); renderCredits(config, t);
@@ -306,55 +313,56 @@ function applyLanguage() {
   $('profile-image').alt = `Avatar · ${profileName}`;
   if (!$('asset-status').hidden && !configurationError) $('asset-status').textContent = t('assetError');
   $('storage-note').textContent = t(storageAvailable ? 'stored' : 'notStored');
-  if (currentRelease) $('update-version').textContent = t('version', { version: currentRelease.version });
-  if (updateStatusKey) $('update-status').textContent = t(updateStatusKey);
+  $('settings-language').value = language;
+  $('installed-version').textContent = installedVersion ? t('version', { version: installedVersion }) : t('versionLoading');
   if (clipboardState) $('clipboard-status').textContent = t(clipboardState.key, clipboardState.values);
   updateAudio(); navigate(false);
 }
-$('language-select').addEventListener('change', async event => {
+async function changeLanguage(event) {
   const requested = event.target.value;
   try {
     const loaded = await loadDictionary(requested); language = loaded.language; strings = loaded.strings;
     try { localStorage.setItem('trimLanguage', language); } catch {}
+    preferences.language = language; saveDisplayPreferences(preferences);
     $('language-status').hidden = !loaded.fallback; applyLanguage();
     $('language-status').textContent = loaded.fallback ? t('translationUnavailable') : '';
   } catch { $('language-status').hidden = false; $('language-status').textContent = t('translationUnavailable'); }
-});
-
-async function checkUpdates(manual = false) {
-  if (!config.updates.enabled) { $('check-updates').hidden = true; return; }
-  const now = Date.now(); let cache;
-  try { cache = JSON.parse(localStorage.getItem('trimUpdateCache') || 'null'); } catch {}
-  const status = key => { updateStatusKey = key; $('update-status').textContent = t(key); };
-  if (manual) { $('update-status').hidden = false; status('checkingUpdates'); }
-  try {
-    let release;
-    if (cache?.nextCheck > now) { if (cache.error) { const error = new Error('Cached update failure.'); error.retryAt = cache.nextCheck; throw error; } release = cache.release; }
-    else {
-      release = await latestRelease();
-      try { localStorage.setItem('trimUpdateCache', JSON.stringify({ nextCheck: now + Math.max(24, Number(config.updates.intervalHours) || 24) * 3600000, release })); } catch {}
-    }
-    const metadata = await fetch(new URL('./version.json', import.meta.url)).then(response => { if (!response.ok) throw new Error('Version unavailable.'); return response.json(); });
-    if (release && compareVersions(release.version, metadata.version) > 0) {
-      currentRelease = release; $('view-update').href = releaseUrl(release); $('update-version').textContent = t('version', { version: release.version });
-      let dismissed; try { dismissed = localStorage.getItem('trimDismissedUpdate'); } catch {}
-      $('update-notice').hidden = !manual && dismissed === release.version;
-      if (manual) status('updateAvailable');
-    } else if (manual) status(release ? 'upToDate' : 'noRelease');
-  } catch (error) {
-    try { localStorage.setItem('trimUpdateCache', JSON.stringify({ nextCheck: error.retryAt || now + 3600000, release: null, error: true })); } catch {}
-    if (manual) status('updateError');
-  }
 }
-$('check-updates').addEventListener('click', () => void checkUpdates(true));
-$('dismiss-update').addEventListener('click', () => {
-  $('update-notice').hidden = true;
-  try { if (currentRelease) localStorage.setItem('trimDismissedUpdate', currentRelease.version); } catch {}
+$('language-select').addEventListener('change', changeLanguage);
+$('settings-language').addEventListener('change', changeLanguage);
+
+for (const [id, field] of [['theme-select','theme'],['accent-select','accent'],['animations-enabled','animations'],['readable-enabled','readable'],['interface-sounds','sounds']]) {
+  const control = $(id);
+  if (control.type === 'checkbox') control.checked = preferences[field]; else control.value = preferences[field];
+  control.addEventListener('change', () => {
+    preferences[field] = control.type === 'checkbox' ? control.checked : control.value;
+    storageAvailable = saveDisplayPreferences(preferences);
+    applyPreferences(preferences);
+    $('storage-note').textContent = t(storageAvailable ? 'stored' : 'notStored');
+  });
+}
+let interfaceAudio;
+document.addEventListener('click', event => {
+  if (!preferences.sounds || !event.target.closest('.menu-button,.back-button,.small-button')) return;
+  try {
+    interfaceAudio ||= new AudioContext();
+    void interfaceAudio.resume().catch(() => {});
+    const tone = interfaceAudio.createOscillator(), gain = interfaceAudio.createGain();
+    tone.frequency.value = 920; gain.gain.setValueAtTime(.018, interfaceAudio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, interfaceAudio.currentTime + .055);
+    tone.connect(gain); gain.connect(interfaceAudio.destination);
+    tone.onended = () => { tone.disconnect(); gain.disconnect(); };
+    tone.start(); tone.stop(interfaceAudio.currentTime + .06);
+  } catch {}
 });
+window.addEventListener('pagehide', () => { music.pause(); });
+window.addEventListener('pageshow', event => { if (event.persisted && enabled && interacted) void playMusic(); });
+void fetch(new URL('./version.json', import.meta.url)).then(response => {
+  if (!response.ok) throw new Error('Version unavailable'); return response.json();
+}).then(metadata => { installedVersion = metadata.version; $('installed-version').textContent = t('version', { version: installedVersion }); })
+  .catch(() => { $('installed-version').textContent = t('versionUnavailable'); });
 
 savePreferences();
 applyLanguage();
 if (configurationError) { $('asset-status').hidden = false; $('asset-status').textContent = t('configError'); }
 if (locale.fallback) { $('language-status').hidden = false; $('language-status').textContent = t('translationUnavailable'); }
-void checkUpdates();
-if (config.updates.enabled) window.setInterval(() => void checkUpdates(), 3600000);

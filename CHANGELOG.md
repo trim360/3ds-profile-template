@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.1.0
+
+- Administration locale facultative dans le template distribué : compte privé,
+  connexion à deux écrans inspirée des références NNID et récupération depuis setup.
+- Édition persistante du profil, des pages, médias, réseaux, musique et apparence.
+- Sessions HttpOnly, contrôle d’origine et CSRF, limitation des connexions,
+  vérification des uploads et rejet des chemins privés lors de l’export.
+- Mises à jour réservées au propriétaire ; installateur vérifié conservé,
+  redémarrage du backend explicite après installation.
+- Mode Docker propriétaire avec volume persistant ; export statique conservé.
+- Migration additive du schéma 2, sauvegardes et détection des éditions concurrentes.
+
+## 2.0.0
+
+- Added persistent appearance, language, readability, animation and audio settings.
+- Removed browser update checks; the owner's setup/CLI updater remains available.
+- Refreshed the showcase with floating glass navigation and the supplied original Bagu.
+- Replaced synthesized demo music with optional supplied MP3 input at build time.
+- Added a working versioned template download, excluding personal media.
+- Preserved existing profile data, icons, setup tools and update recovery.
+
 ## 1.2.0
 
 - Shared English/French Easy Setup for Windows and Linux; no npm dependencies.

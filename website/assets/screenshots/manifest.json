@@ -1,37 +1,37 @@
 {
   "home": {
-    "width": 1032,
-    "height": 834,
-    "sha256": "a18524d7eb7325e1a126f88b234b519a47bc043a01e5db862583b896066c2351",
-    "bytes": 39124,
-    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+    "width": 1020,
+    "height": 822,
+    "sha256": "c0e541810bb77658a3403822992f53e0928f04faa02622f3c834c5933965555d",
+    "bytes": 28562,
+    "source": "Actual V2 demo in Chromium 1.65.0, French/classic; cropped to settings window. No synthetic UI."
   },
   "profile": {
-    "width": 1033,
-    "height": 898,
-    "sha256": "dc57c9a4bb08e066d2c949f6d9376be2a6f572291d262915a261d1d2006fa99c",
-    "bytes": 37776,
-    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+    "width": 1020,
+    "height": 886,
+    "sha256": "033fe5898b6b22fe691834c6776f5dcd8e203e8919ce6bfd7c52eca091025de3",
+    "bytes": 32856,
+    "source": "Actual V2 demo in Chromium 1.65.0, French/classic; cropped to settings window. No synthetic UI."
   },
   "sona": {
-    "width": 1033,
-    "height": 972,
-    "sha256": "4c80fb8dd01e9d0e9157e0395e50b531ea652da0396e10eea48a4e1cb6be4f09",
-    "bytes": 32400,
-    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+    "width": 1020,
+    "height": 959,
+    "sha256": "d60ce413add2e4f21f0341e2efb892d7fc9d164240c1a098246ab5a1d6bef2e0",
+    "bytes": 30012,
+    "source": "Actual V2 demo in Chromium 1.65.0, French/classic; cropped to settings window. No synthetic UI."
   },
   "audio": {
-    "width": 1032,
-    "height": 713,
-    "sha256": "8b1a4379b8ec7ed62a4228c0d5cc5cd57dc5247f94999917866b44fd2f141171",
-    "bytes": 34016,
-    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+    "width": 1020,
+    "height": 1254,
+    "sha256": "f06e35c741d28c4e921be95bed44576593b2ed40bba8d52d5922592f291d4970",
+    "bytes": 52410,
+    "source": "Actual V2 demo in Chromium 1.65.0, French/classic; cropped to settings window. No synthetic UI."
   },
   "gallery": {
-    "width": 1033,
-    "height": 895,
-    "sha256": "62cf5a0afd456228ded2c7fd5417368a38edcd72cf3ad1a481887f8b8c2f90ee",
-    "bytes": 39080,
-    "source": "Actual bundled demo, Chromium screenshot; cropped to the settings window; no synthetic UI."
+    "width": 1020,
+    "height": 882,
+    "sha256": "751fd197705617387a6c1674e62636e8619e665a6e07545aeb2d9503bcace713",
+    "bytes": 34100,
+    "source": "Actual V2 demo in Chromium 1.65.0, French/classic; cropped to settings window. No synthetic UI."
   }
 }

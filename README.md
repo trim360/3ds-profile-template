@@ -1,4 +1,4 @@
-# 3DS Personal Website · 1.2.0
+# 3DS Personal Website · 2.1.0
 
 [English](#english) · [Français](#français)
 
@@ -119,12 +119,73 @@ Everything in a deployed website, including `config.js` and media, is public.
 Never put secrets in your profile. The `domain` field is a display label;
 DNS/custom-domain configuration is separate. No setup action publishes a site.
 
+### Optional owner administration (Node.js or Docker)
+
+Static hosting remains the default. To edit in a browser, run **o** in setup
+to create your local owner account, then start:
+
+```sh
+node scripts/owner.mjs serve
+```
+
+Open `http://127.0.0.1:8120/assets/owner/index.html`. The two-screen interface
+uses a local identifier and a password of 12–128 characters. It never connects
+to Nintendo. Only a logged-in owner can edit the profile, avatar, biography,
+pages, gallery, social links, music, language and default appearance.
+**Enregistrer et publier** saves and rebuilds the public site immediately;
+visitors cannot use these APIs. The editor currently uses French labels.
+Existing visitors keep their own audio and appearance preferences.
+
+The first interactive setup offers static or owner mode. Existing installs
+can add owner mode at any time with **o**; no profile is replaced. Passwords
+are entered without echo and stored as salted scrypt hashes in `.owner/`,
+outside the public export. Keep that directory private and back it up along
+with `user-content/`. Never upload the source directory as a public static root:
+publish **dist/** only. A static export contains owner setup guidance, without
+a working login or editing API. GitHub Pages needs no backend.
+
+For Docker, the optional service has its own persistent volume:
+
+```sh
+docker compose --profile owner build owner
+docker compose --profile owner run --rm owner node scripts/owner.mjs configure --root /data/site
+docker compose --profile owner up -d owner
+```
+
+This serves the site and editor on loopback port 8120. It does not start the
+static service or change your domain. The first start copies the template
+and configured profile into `owner-data`; subsequent starts preserve it.
+Back up the volume; **do not use `docker compose down -v`** to restart it.
+Rebuilding the image does not overwrite the volume. Use setup/update inside
+that workspace or the owner's update tab to update an existing workspace.
+
+For remote use, put an HTTPS reverse proxy in front of port 8120, preserve
+the public Host header, and set `OWNER_ORIGIN=https://your-domain.example`
+in the Docker process environment. For direct Node, pass
+`--origin https://your-domain.example`; binding outside loopback also requires
+`--host` and an explicit HTTPS origin. This is an origin setting, not a TLS
+certificate installer. Public HTTP is rejected. Sessions use HttpOnly,
+SameSite cookies (Secure on HTTPS), CSRF checks, an eight-hour maximum and a
+30-minute idle timeout. A shared reverse proxy shares the login rate limit;
+forwarded IP headers are deliberately ignored.
+
+Forgotten password: run **o** in local setup and confirm reset, or run
+`node scripts/owner.mjs reset`. Docker:
+`docker compose --profile owner run --rm owner node scripts/owner.mjs reset --root /data/site`.
+There is no email reset. Reset/restart invalidates existing sessions and keeps
+the profile and media. Restart the Node process or run
+`docker compose --profile owner restart owner` after installing an update.
+This reloads the updated backend modules; sign in again afterwards.
+
 ### Updates and backups
 
-The browser checks the official **stable GitHub Releases**, at most once per
-24 hours by default. It offers View update / Later and handles missing releases,
-network errors and rate limits. Commits on `main` are not release notifications.
-Until a stable Release is published, it correctly reports that none exists.
+Visitors cannot check or install updates. The public site has no update button
+or public update endpoint. Owners check stable GitHub Releases in local setup
+or the authenticated owner settings; commits on `main` do not count as releases.
+
+Open **Settings** below the console, or `#parametres`, to adjust music, volume,
+button feedback, theme, accent, language, readability and animations. Choices
+stay in this browser. System reduced-motion preferences are respected.
 
 Use setup option **8**, or `node scripts/update.mjs`, for installation.
 The tool shows the version/changelog and asks before installing. It verifies
@@ -178,6 +239,49 @@ modified code. Third-party images retain their separate notices and trademark
 rights; the code license grants no Nintendo endorsement. Provided without warranty.
 
 ## Français
+
+### Administration locale facultative — version 2.1
+
+Le template téléchargé contient le backend et l’éditeur ; ils ne sont pas
+réservés à la démo. Le mode statique reste disponible sans serveur Node.
+Au premier setup interactif, choisis le mode statique ou propriétaire.
+Sur une installation existante, l’option **o** ajoute le compte sans remplacer
+ton profil. L’identifiant et le mot de passe appartiennent uniquement au site.
+Le mot de passe (12 à 128 caractères) est saisi de façon masquée et enregistré
+sous forme d’empreinte scrypt dans le dossier privé `.owner/`.
+
+```sh
+node scripts/owner.mjs serve
+```
+
+Ouvre `http://127.0.0.1:8120/assets/owner/index.html`. L’écran supérieur reprend
+le profil et les consignes ; l’écran inférieur contient la connexion puis les
+réglages. L’éditeur permet de modifier le profil, les images, la biographie,
+les pages, la galerie, les réseaux, la musique, la langue et l’apparence.
+**Enregistrer et publier** sauvegarde les données puis reconstruit le site.
+Les API d’édition sont réservées au propriétaire connecté. Les préférences
+déjà choisies par les visiteurs restent prioritaires sur les valeurs initiales.
+
+Les commandes Docker ci-dessus créent un service facultatif `owner`, avec
+ses données dans le volume `owner-data`. Le port 8120 reste local. Pour un
+domaine, utilise un proxy HTTPS qui transmet le Host public et définis
+`OWNER_ORIGIN=https://ton-domaine.example` dans l’environnement du processus
+Docker, ou `--origin https://ton-domaine.example` avec Node. Le backend ne
+génère pas de certificat. Aucune connexion aux serveurs Nintendo n’est utilisée.
+La création de compte par une page publique est désactivée.
+
+Le bouton **Vérifier les mises à jour** se trouve uniquement dans l’espace
+propriétaire ; l’option **8** de setup et `scripts/update.mjs` sont conservés.
+Après une mise à jour, redémarre le backend puis reconnecte-toi. Pour récupérer
+un compte, utilise **o** dans setup et confirme la réinitialisation, ou
+`node scripts/owner.mjs reset`. Avec Docker, utilise la commande `reset`
+ci-dessus. Les anciennes sessions sont invalidées, les données sont conservées.
+
+Sauvegarde `.owner/` et `user-content/` en privé. Avec Docker, sauvegarde le
+volume ; une suppression avec `down -v` effacerait ces données. Pour un hébergement
+statique, publie uniquement `dist/` : le compte privé et les scripts serveur
+n’y figurent pas. La page propriétaire affiche alors les instructions de setup,
+sans formulaire de connexion actif. Aucun mot de passe ne va dans `config.js`.
 
 Un modèle de site personnel créé par **Trim**, inspiré des paramètres Nintendo 3DS.
 Le fond crème, les boutons en relief, les dimensions, les textures, les animations
@@ -295,11 +399,13 @@ et le domaine personnalisé se règlent séparément. Setup ne publie aucun site
 
 ### Mises à jour et sauvegardes
 
-Le navigateur consulte les **GitHub Releases stables officielles**, au plus une
-fois par 24 h par défaut. Voir la mise à jour / Plus tard sont proposés ; absence
-de Release, erreurs réseau et limites sont gérées. Les commits sur `main` ne sont
-pas des notifications de version. Tant qu’aucune Release stable n’est publiée,
-l’outil indique correctement qu’il n’y en a aucune.
+Les visiteurs n’ont aucun bouton ni point d’accès public de mise à jour. Le propriétaire
+consulte les GitHub Releases stables depuis setup ou son espace authentifié. Les commits sur
+`main` ne comptent pas comme des versions publiées.
+
+Ouvre **Paramètres** sous la console, ou `#parametres`, pour régler musique,
+volume, retour sonore, thème, couleur, langue, lisibilité et animations. Les choix
+restent dans ce navigateur. La réduction des animations du système est respectée.
 
 Utilise **8** dans setup ou `node scripts/update.mjs --fr` pour installer.
 L’outil présente version/changements puis demande confirmation. Il vérifie

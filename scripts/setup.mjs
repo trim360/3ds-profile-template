@@ -6,10 +6,12 @@ import { randomUUID } from 'node:crypto';
 import { homedir } from 'node:os';
 import { ROOT, exists, loadProfile, saveProfile, importMedia, previewSite, buildSite, withLock } from '../lib/project.mjs';
 import { safeUrl, validateConfig } from '../lib/config.mjs';
+import { readOwner } from '../lib/owner-auth.mjs';
+import { configureFromTerminal } from './owner.mjs';
 
 export async function runSetup({ root = ROOT, input = process.stdin, output = process.stdout } = {}) {
   if (Number(process.versions.node.split('.')[0]) < 22) throw new Error('Node.js 22+ LTS required: https://nodejs.org/');
-  const rl = createInterface({ input, terminal: false }); const lines = rl[Symbol.asyncIterator]();
+  let rl = createInterface({ input, terminal: false }); let lines = rl[Symbol.asyncIterator]();
   const print = text => output.write(String(text) + '\n');
   let language = 'en'; let strings;
   async function ask(label) {
@@ -163,23 +165,38 @@ export async function runSetup({ root = ROOT, input = process.stdin, output = pr
     try { await ask(t('preview', { url: address })); } finally { await new Promise(resolve => server.close(resolve)); }
   }
   async function build() { if (await yes('buildConfirm')) print(t('build', { path: await buildSite(root) })); }
+  async function owner() {
+    const reset=Boolean(await readOwner(root));
+    if(reset&&!await yes('ownerReset'))return;
+    if(input.isTTY){
+      rl.close();
+      try{await configureFromTerminal({root,reset,input,output});}
+      finally{rl=createInterface({input,terminal:false});lines=rl[Symbol.asyncIterator]();}
+    }else await configureFromTerminal({root,reset,input,output,ask,secret:ask});
+  }
   try {
     let selected;
     do { selected = await ask('Language / Langue: [1] English  [2] Français'); } while (!['1', '2'].includes(selected));
     language = selected === '2' ? 'fr' : 'en';
     strings = JSON.parse(await readFile(path.join(root, `locales/${language}.json`), 'utf8')).setup;
-    print(t('welcome')); print(t('environment', { os: process.platform, version: process.versions.node })); print(t('keep'));
+    const installed=JSON.parse(await readFile(path.join(root,'version.json'),'utf8'));
+    print(t('welcome',{version:installed.version})); print(t('environment', { os: process.platform, version: process.versions.node })); print(t('keep'));
     for (const file of ['index.html', 'script.js', 'style.css', 'config.js', 'version.json', 'assets/avatar.svg']) if (!await exists(path.join(root, file))) throw new Error(`Missing essential file: ${file}`);
     const probe = path.join(root, `.write-test-${randomUUID()}`); await writeFile(probe, '', { flag: 'wx' }); await unlink(probe); print(t('writeCheck'));
     if (await exists(path.join(root, 'user-content/profile.json'))) print(t('existing'));
+    else if(input.isTTY&&!await readOwner(root)){
+      print(t('ownerOptional'));
+      if((await ask(t('ownerMode'))).toLowerCase()==='o')await owner();
+    }
     for (;;) {
       const config = await loadProfile(root); const before = JSON.stringify(config);
-      const choice = await ask(t('menu'));
+      const choice = await ask(t('menu')+'\n[o] '+t('ownerMenu'));
       if (choice === '0' || !choice) break;
       try {
         if (choice === '9') { await preview(); continue; }
         if (choice === 'b') { await build(); continue; }
         if (choice === '8') { const { runUpdater } = await import('./update.mjs'); await runUpdater({ root, language, ask, print }); continue; }
+        if (choice === 'o') { await owner();continue; }
         if (!['1', '2', '3', '4', '5', '6', '7', 'a'].includes(choice)) continue;
         if (choice === '1') {
           for (const [key, field] of [['name','name'], ['pronouns','pronouns'], ['title','title'], ['about','about'], ['bio','bio']]) config[field] = await entry(key, config[field]);

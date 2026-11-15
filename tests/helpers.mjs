@@ -8,6 +8,7 @@ export async function fixture(t) {
   t.after(async () => { const resolved = await realpath(root); if (path.dirname(resolved) !== parent || !path.basename(resolved).startsWith('3ds-v12-')) throw new Error('Unsafe test cleanup.'); await rm(resolved, { recursive: true }); });
   for (const file of [...await managedFiles(ROOT), 'config.js']) { const to = path.join(root, file); await mkdir(path.dirname(to), { recursive: true }); await copyFile(path.join(ROOT, file), to); }
   await chmod(path.join(root, 'setup.sh'), 0o755);
+  await writeFile(path.join(root, 'version.json'), JSON.stringify({ version: '1.2.0', schemaVersion: 2, minimumNode: 22 }));
   const files = {};
   for (const file of await managedFiles(root)) files[file] = sha256(await readFile(path.join(root, file)));
   await writeFile(path.join(root, 'template-manifest.json'), JSON.stringify({ version: '1.2.0', schemaVersion: 2, files }));

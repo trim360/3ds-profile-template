@@ -4,28 +4,18 @@ import { fileURLToPath } from 'node:url';
 import { randomUUID, createHash } from 'node:crypto';
 import { ROOT as PROJECT, managedFiles, saveProfile, buildSite, exists } from '../lib/project.mjs';
 import { site, links, screenshots } from './config.mjs';
+import { createZip } from '../scripts/release.mjs';
+import { managedPath } from '../scripts/update.mjs';
+import { DEFAULT_CONFIG } from '../lib/config.mjs';
 
 export const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const escape = text => String(text).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
-export function demoSound() {
-  const rate = 11025, seconds = 8, samples = rate * seconds;
-  const wav = Buffer.alloc(44 + samples * 2);
-  wav.write('RIFF'); wav.writeUInt32LE(wav.length - 8, 4); wav.write('WAVEfmt ', 8); wav.writeUInt32LE(16, 16);
-  wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22); wav.writeUInt32LE(rate, 24); wav.writeUInt32LE(rate * 2, 28);
-  wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34); wav.write('data', 36); wav.writeUInt32LE(samples * 2, 40);
-  for (let i = 0; i < samples; i++) {
-    const t = i / rate, beat = t % 2, frequency = [261.63, 329.63, 392, 523.25][Math.floor(t / 2)];
-    const envelope = Math.min(1, beat / .08) * Math.exp(-beat * 2) * Math.min(1, (seconds - t) / .2);
-    wav.writeInt16LE(Math.round(Math.sin(2 * Math.PI * frequency * t) * envelope * 4400), 44 + i * 2);
-  }
-  return wav;
-}
 async function clean(folder) {
   const parent = await realpath(path.dirname(folder));
   if (parent !== await realpath(ROOT) || !path.basename(folder).startsWith('.build-')) throw new Error('Unsafe build cleanup.');
   await rm(folder, { recursive: true, force: true });
 }
-export async function build({ demoOnly = false, canonicalUrl = site.canonicalUrl } = {}) {
+export async function build({ demoOnly = false, canonicalUrl = site.canonicalUrl, musicFile = process.env.DEMO_MUSIC_FILE || '', baguFile = process.env.SHOWCASE_BAGU_FILE || '' } = {}) {
   if (canonicalUrl && (!/^https?:\/\//.test(canonicalUrl) || new URL(canonicalUrl).username || new URL(canonicalUrl).password || new URL(canonicalUrl).search || new URL(canonicalUrl).hash)) throw new Error('Use a public HTTP(S) canonical URL without credentials, query or fragment.');
   const base = canonicalUrl ? canonicalUrl.replace(/\/?$/, '/') : '';
   const temporary = path.join(ROOT, '.build-' + randomUUID());
@@ -34,17 +24,20 @@ export async function build({ demoOnly = false, canonicalUrl = site.canonicalUrl
   try {
     const demo = path.join(temporary, 'source'); await mkdir(demo);
     const demoAssets = new Set(['assets/avatar.svg','assets/settings-3ds.png','assets/profile.svg','assets/network.svg','assets/audio.svg']);
-    for (const file of [...await managedFiles(PROJECT), 'config.js'].filter(file => !file.startsWith('assets/') || demoAssets.has(file))) {
+    for (const file of [...await managedFiles(PROJECT), 'config.js'].filter(file => !file.startsWith('assets/') || demoAssets.has(file) || file.startsWith('assets/privacy/') || file.startsWith('assets/owner/'))) {
       const target = path.join(demo, file); await mkdir(path.dirname(target), { recursive: true }); await copyFile(path.join(PROJECT, file), target);
     }
     await mkdir(path.join(demo, 'user-content/media'), { recursive: true });
-    await writeFile(path.join(demo, 'user-content/media/demo-loop.wav'), demoSound());
+    if (musicFile) {
+      if (!/\.mp3$/i.test(musicFile)) throw new Error('The hosted demo music must be a supplied MP3 file.');
+      await copyFile(musicFile, path.join(demo, 'user-content/media/internet-settings-3ds.mp3'));
+    }
     await saveProfile(demo, {
       name: 'Demo profile', pronouns: 'they / them', about: 'A sample profile. Make the next one your own.',
       bio: 'This is a demonstration of the template, with example content and no personal information.',
       links: [{ name: 'Project source', url: links.repository, icon: 'github' }],
-      music: 'user-content/media/demo-loop.wav', musicTitle: 'Original demonstration loop',
-      musicCredit: { owner: 'other', artist: 'Procedurally generated for this demo', source: '', rightsConfirmed: true },
+      music: musicFile ? 'user-content/media/internet-settings-3ds.mp3' : '', musicTitle: musicFile ? 'Nintendo 3DS Internet Settings' : '',
+      musicCredit: { owner: 'other', artist: musicFile ? 'Nintendo' : '', source: '', rightsConfirmed: Boolean(musicFile) },
       updates: { enabled: false }, language: 'auto',
       translations: { enabled: true, values: { fr: { about: 'Un profil de démonstration. À toi de créer le suivant.', bio: 'Cette démo utilise des contenus d’exemple et ne contient aucune information personnelle.', 'page.sona': 'Une fiche de personnage avec des caractéristiques et des illustrations d’exemple.', 'page.gallery': 'Des images d’exemple pour découvrir la galerie.' } } },
       pages: [
@@ -54,13 +47,24 @@ export async function build({ demoOnly = false, canonicalUrl = site.canonicalUrl
     });
     const script = path.join(demo, 'script.js');
     let source = await readFile(script, 'utf8');
-    for (const key of ['AudioPreferences','Language','UpdateCache','DismissedUpdate','ViewCount','HasVisited']) source = source.replaceAll('trim' + key, 'showcaseDemo' + key);
+    for (const key of ['AudioPreferences','Language','ViewCount','HasVisited']) source = source.replaceAll('trim' + key, 'showcaseDemo' + key);
     await writeFile(script, source);
     await buildSite(demo);
     const ready = path.join(temporary, 'ready'); await mkdir(ready);
     await rename(path.join(demo, 'dist'), path.join(ready, 'demo'));
     await writeFile(path.join(ready, '.3ds-showcase-build'), '1\n');
     if (!demoOnly) {
+      const downloadable = new Map(), hashes = {};
+      const prefix = `3ds-personal-website-v${site.version}/`;
+      for (const file of (await managedFiles(PROJECT)).filter(managedPath)) {
+        const bytes = await readFile(path.join(PROJECT, file));
+        hashes[file] = createHash('sha256').update(bytes).digest('hex');
+        downloadable.set(prefix + file, bytes);
+      }
+      downloadable.set(prefix + 'config.js', Buffer.from('window.PROFILE_CONFIG = ' + JSON.stringify(DEFAULT_CONFIG) + ';\n'));
+      downloadable.set(prefix + 'template-manifest.json', Buffer.from(JSON.stringify({ version: site.version, schemaVersion: 2, files: hashes })));
+      await mkdir(path.join(ready, 'downloads'));
+      await writeFile(path.join(ready, `downloads/3ds-personal-website-v${site.version}.zip`), createZip(downloadable));
       const en = JSON.parse(await readFile(path.join(ROOT, 'locales/en.json'), 'utf8'));
       for (const file of ['style.css', 'app.mjs', 'config.mjs']) await copyFile(path.join(ROOT, file), path.join(ready, file));
       await cp(path.join(ROOT, 'locales'), path.join(ready, 'locales'), { recursive: true });
@@ -69,6 +73,13 @@ export async function build({ demoOnly = false, canonicalUrl = site.canonicalUrl
       await copyFile(path.join(PROJECT, 'assets/settings-3ds.png'), path.join(ready, 'assets/settings-3ds.png'));
       await copyFile(path.join(PROJECT, 'NOTICE'), path.join(ready, 'NOTICE'));
       let html = await readFile(path.join(ROOT, 'index.html'), 'utf8');
+      if (baguFile) {
+        const extension = path.extname(baguFile).toLowerCase();
+        if (!['.png','.gif','.webp','.avif'].includes(extension)) throw new Error('Use the original Bagu PNG, GIF, WebP or AVIF.');
+        const target = 'assets/bagu-original' + extension;
+        await copyFile(baguFile, path.join(ready, target));
+        html = html.replace('<!-- original Bagu -->', `<figure class="bagu"><img src="${target}" alt="Bagu" loading="eager" decoding="async"><figcaption data-i18n="baguGreeting">${escape(en.baguGreeting)}</figcaption></figure>`);
+      }
       const dimensions = JSON.parse(await readFile(path.join(ROOT, 'assets/screenshots/manifest.json'), 'utf8'));
       for (const shot of screenshots) {
         const info = dimensions[shot.id];

@@ -1,7 +1,7 @@
 export const site = {
   name: '3DS Personal Website',
   repository: 'https://github.com/trim360/3ds-profile-template',
-  version: '1.2.0',
+  version: '2.1.0',
   canonicalUrl: '',
   creator: { name: 'Trim', url: 'https://kirbytrim.buzz/' },
   community: [{ name: 'weizkule', url: 'https://weizkule.be', credit: 'communityCredit' }],
@@ -9,7 +9,7 @@ export const site = {
 export const links = {
   repository: site.repository,
   releases: `${site.repository}/releases`,
-  download: `${site.repository}/releases/download/v${site.version}/3ds-personal-website-v${site.version}.zip`,
+  download: `./downloads/3ds-personal-website-v${site.version}.zip`,
   issues: `${site.repository}/issues`,
   docs: `${site.repository}/blob/main/README.md`,
   license: `${site.repository}/blob/main/LICENSE`,

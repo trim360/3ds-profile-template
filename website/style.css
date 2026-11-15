@@ -3,12 +3,12 @@
   color:#30362b;
   background:#faf8f1;
   font-synthesis:none;
-  --ink:#30362b;
-  --muted:#606455;
+  --ink:#342e29;
+  --muted:#62594f;
   --accent:#a54118;
-  --cream:#eeeccf;
-  --line:#b9b9a7;
-  --olive:#4e6038;
+  --cream:#fff0da;
+  --line:#cabda8;
+  --olive:#ae2436;
   --paper:#fffef8;
   --ease:cubic-bezier(.2,.7,.2,1);
   color-scheme:light;
@@ -122,14 +122,19 @@ section[id] {
 }
 .site-header {
   position:sticky;
-  top:0;
+  top:12px;
   z-index:10;
-  background:var(--paper);
-  border-bottom:1px solid var(--line);
-  box-shadow:inset 0 -3px #f0f0e6;
+  width:min(1240px,calc(100% - 24px));
+  margin:12px auto 0;
+  border:1px solid #ffffff;
+  border-radius:26px;
+  background:rgba(255,253,248,.92);
+  box-shadow:inset 0 1px 0 #fff,0 5px 18px #623d1714;
+  -webkit-backdrop-filter:blur(16px) saturate(115%);
+  backdrop-filter:blur(16px) saturate(115%);
 }
 .nav-wrap {
-  width:min(1200px,calc(100% - 32px));
+  width:calc(100% - 32px);
   margin:auto;
   min-height:76px;
   display:flex;
@@ -170,13 +175,16 @@ section[id] {
   min-width:65px;
 }
 #navigation {
+  position:relative;
+  isolation:isolate;
   display:flex;
   gap:3px;
   margin-left:auto;
   padding:3px;
   border-radius:10px;
-  background:#f0f0e6;
+  background:transparent;
 }
+#navigation::before { content:""; position:absolute; z-index:-1; pointer-events:none; left:0; top:0; width:var(--active-width,0px); height:var(--active-height,44px); transform:translate(var(--active-x,0px),var(--active-y,3px)); border:1px solid #e8bd8f; border-radius:15px; background:#fff0dc; transition:transform 220ms var(--ease),width 220ms var(--ease),height 220ms var(--ease); }
 #navigation a {
   display:flex;
   align-items:center;
@@ -184,13 +192,34 @@ section[id] {
   padding:8px 11px;
   text-decoration:none;
   font-size:.88rem;
-  border-radius:6px;
+  border-radius:15px;
   transition:background 180ms,color 180ms;
 }
 #navigation a:hover,#navigation a[aria-current] {
-  background:var(--paper);
-  color:var(--olive);
+  color:#843c14;
 }
+#navigation a:hover { box-shadow:inset 0 0 0 1px #e8bd8f; background:#fff7ed88; }
+.project-traits { display:flex; flex-wrap:wrap; gap:12px 22px; list-style:none; margin:22px 0 0; padding:0; color:var(--muted); font-size:.9rem; }
+.project-traits li { border-bottom:2px solid #d89353; padding-block:4px; }
+.bagu { display:flex; align-items:center; gap:16px; margin-top:28px; }
+.bagu img { width:132px; height:132px; object-fit:contain; }
+.bagu figcaption { max-width:16rem; color:var(--ink); font-size:.9rem; }
+@supports not (backdrop-filter:blur(1px)) { .site-header { background:#fffdf8; } }
+html[data-theme=light] { background:#fff; --paper:#fff; --cream:#f3f5f7; }
+html[data-theme=night] { color-scheme:dark; background:#17202b; color:#f2f5f9; --ink:#f2f5f9; --muted:#d3dce8; --paper:#273444; --cream:#344254; --line:#718197; --olive:#ff9ba5; }
+html[data-theme=night] :is(.site-header,#navigation.is-open) { background:#273444ec; }
+html[data-theme=night] #navigation::before { background:#674322; border-color:#d49c64; }
+html[data-theme=night] #navigation a { color:#f2f5f9; }
+html[data-theme=night] :is(.features,.install-instructions,.site-footer,.preview-top,.hero-preview,.shot-grid figure) { background:var(--paper); color:var(--ink); }
+html[data-theme=night] :is(.button:not(.primary),.tour-tabs button,.os-tabs button,select) { background:#344254; color:#f2f5f9; }
+html[data-theme=night] :is(.preview-top,.hero-preview figcaption) { color:#d3dce8; }
+html[data-theme=night] #copy-command { background:#344254; color:#f2f5f9; }
+html[data-accent=blue] { --accent:#17628d; }
+html[data-accent=red] { --accent:#9f2335; }
+html[data-readable=true] { font-size:18px; }
+html[data-animations=false] { scroll-behavior:auto; }
+html[data-animations=false] *,html[data-animations=false] *::before,html[data-animations=false] *::after { animation:none!important;transition:none!important;scroll-behavior:auto!important; }
+html[data-animations=false] [data-reveal] { opacity:1!important; transform:none!important; }
 .menu-toggle {
   display:none;
   background:transparent;

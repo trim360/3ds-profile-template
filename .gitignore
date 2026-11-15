@@ -1,4 +1,5 @@
 .env
+.owner/
 .env.*
 !.env.example
 .DS_Store

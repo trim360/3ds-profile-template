@@ -1,5 +1,6 @@
 .git
 .env
+.owner
 .env.*
 backups
 dist

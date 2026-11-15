@@ -60,9 +60,18 @@ Run the normal build afterwards to restore the full showcase.
 
 The demo is generated from the existing template without modifying its source.
 Its profile is sample data; its local-storage keys are separate from the
-personal template. Its optional audio is an original procedurally generated
-eight-second loop, not Nintendo music. Visitors can change browser preferences
-but cannot write the static configuration on the server. No accounts or backend.
+personal template. Builds are silent by default. To use an authorized original
+track, set `DEMO_MUSIC_FILE` to its MP3 path before building. `SHOWCASE_BAGU_FILE`
+optionally supplies an original PNG/GIF/WebP/AVIF, copied unchanged, including
+animation. These two files are deployment inputs and are excluded from the
+downloadable template ZIP. Trim's hosted demo uses his supplied 3DS track and Bagu.
+Visitors can change browser preferences but cannot write static configuration
+on the server. No accounts or backend. Settings are at `demo/#parametres`;
+the previous `#audio` link still works.
+
+Each full build includes a versioned ZIP under `downloads/`. Its contents have
+a SHA256 manifest, default configuration, setup tools and source, without any
+personal data. It is available immediately without requiring a GitHub release.
 
 ### Production export
 

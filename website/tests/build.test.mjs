@@ -4,7 +4,7 @@ import { readFile, stat, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
-import { ROOT, build, demoSound } from '../build.mjs';
+import { ROOT, build } from '../build.mjs';
 import { site, links, screenshots, chooseLanguage } from '../config.mjs';
 import { parseLegacyConfig } from '../../lib/config.mjs';
 
@@ -19,6 +19,14 @@ test('language dictionaries cover the UI and preserve the same keys', async () =
   for (const match of html.matchAll(/data-(?:i18n|alt)="([^"]+)"/g)) assert.equal(typeof en[match[1]], 'string', match[1]);
   for (const dictionary of [en, fr]) for (const text of Object.values(dictionary)) assert.equal(typeof text, 'string');
   assert.equal(chooseLanguage(['de-DE']), 'en'); assert.equal(chooseLanguage(['fr-CA']), 'fr'); assert.equal(chooseLanguage(['de-DE','fr']), 'fr'); assert.equal(chooseLanguage(['fr'], 'en'), 'en');
+});
+
+test('template settings translations exist in both UI dictionaries', async () => {
+  const html = await readFile(path.join(projectRoot, 'index.html'), 'utf8');
+  for (const language of ['en','fr']) {
+    const { ui } = JSON.parse(await readFile(path.join(projectRoot, `locales/${language}.json`)));
+    for (const match of html.matchAll(/data-i18n="([^"]+)"/g)) assert.equal(typeof ui[match[1]], 'string', language + ': ' + match[1]);
+  }
 });
 
 test('real screenshots match their manifest and stay within the image budget', async () => {
@@ -42,16 +50,16 @@ test('build works in a subdirectory, generates honest metadata, and keeps privat
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const target = match[1];
     if (target.startsWith('#')) assert.ok(html.includes(`id="${target.slice(1)}"`), target);
-    else if (!/^https?:/.test(target)) assert.ok((await stat(path.join(dist, target.endsWith('/') ? target + 'index.html' : target))).isFile(), target);
+    else if (!/^https?:/.test(target)) { const file = target.split('#')[0]; assert.ok((await stat(path.join(dist, file.endsWith('/') ? file + 'index.html' : file))).isFile(), target); }
   }
   const profile = parseLegacyConfig(await readFile(path.join(dist, 'demo/config.js'), 'utf8'));
   assert.equal(profile.name, 'Demo profile'); assert.equal(profile.updates.enabled, false);
   assert.equal(profile.musicCredit.owner, 'other'); assert.equal(profile.links.length, 1); assert.equal(profile.links[0].url, site.repository);
-  assert.equal(profile.music, 'user-content/media/demo-loop.wav');
+  assert.equal(profile.music, '');
   const script = await readFile(path.join(dist, 'demo/script.js'), 'utf8');
   assert.doesNotMatch(script, /trimAudioPreferences/); assert.match(script, /showcaseDemoAudioPreferences/);
   await assert.rejects(stat(path.join(dist, 'demo/user-content/profile.json')));
-  const audio = await readFile(path.join(dist, 'demo', profile.music)); assert.deepEqual(audio, demoSound());
+  await assert.rejects(stat(path.join(dist, 'demo/user-content/media/demo-loop.wav')));
   await build(); html = await readFile(path.join(dist, 'index.html'), 'utf8');
   assert.doesNotMatch(html, /rel="canonical"/); await assert.rejects(stat(path.join(dist, 'sitemap.xml')));
 });
@@ -63,7 +71,7 @@ test('export is small, static and has no personal or credential files', async ()
       const full = path.join(folder, file.name), relative = path.relative(dist, full);
       assert.ok(!/^\.env/.test(file.name) && !['profile.json','migration-profile.json'].includes(file.name), relative);
       if (file.isDirectory()) await walk(full);
-      else if (!relative.startsWith('demo' + path.sep)) websiteBytes += (await stat(full)).size;
+      else if (!relative.startsWith('demo' + path.sep) && !relative.startsWith('downloads' + path.sep)) websiteBytes += (await stat(full)).size;
       if (/\.(mp3|ogg|m4a)$/i.test(file.name)) assert.fail('Unexpected audio: ' + relative);
     }
   }
@@ -88,6 +96,6 @@ test('preview serves the demo, dictionaries and modules on a real free port', as
   const head = await fetch(address, { method:'HEAD' }); assert.equal(head.status, 200); assert.equal(await head.text(), '');
 });
 
-test('the personal template source remains unchanged', async () => {
+test('showcase builds do not mutate template source', async () => {
   for (const [file, hash] of before) assert.equal(createHash('sha256').update(await readFile(path.join(projectRoot, file))).digest('hex'), hash, file);
 });

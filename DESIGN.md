@@ -30,3 +30,15 @@ trois boutons de 210 px de haut sur le profil vide à 1265 px de largeur. La lan
 et les mises à jour se placent sous cette fenêtre. Les pages supplémentaires
 réutilisent les mêmes boutons et leur grille ; les contenus facultatifs ne sont
 affichés que lorsqu’ils sont renseignés.
+
+L’administration 2.1 suit les deux photographies NNID fournies par Trim : écran
+supérieur bleu pâle rayé, en-tête orange et identité ; écran inférieur séparé
+pour les champs et les actions. Le logo Nintendo Network et la clé 3DS restent
+les fichiers d’origine. Les reliefs distinguent les commandes, les onglets
+séparent les catégories réelles de données. Aucun nouveau visuel n’est généré.
+Sur téléphone, les deux écrans restent empilés, les onglets se replient en deux
+colonnes et les champs occupent la largeur disponible. Les commandes ont une
+hauteur minimale de 46 px et un focus visible ; les erreurs utilisent un message
+persistant. La récupération explique la commande locale réelle, sans faux lien
+de réinitialisation par e-mail. Les limites de validation figurent dans le rapport
+de vérification ; les réglages des visiteurs restent indépendants du compte.

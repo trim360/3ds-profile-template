@@ -1,4 +1,16 @@
 services:
+  owner:
+    profiles: [owner]
+    build:
+      context: .
+      target: owner
+    environment:
+      OWNER_ORIGIN: ${OWNER_ORIGIN:-http://127.0.0.1:8120}
+    ports:
+      - "127.0.0.1:8120:8120"
+    volumes:
+      - owner-data:/data
+    restart: unless-stopped
   trim-site:
     build: .
     ports:
@@ -11,3 +23,5 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+volumes:
+  owner-data:

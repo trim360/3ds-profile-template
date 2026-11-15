@@ -10,6 +10,9 @@
   <meta name="twitter:image" content="assets/screenshots/home.webp"><meta name="twitter:image:alt" content="{{shot.home.alt}}">
   <!-- canonical -->
   <link rel="icon" href="assets/settings-3ds.png" type="image/png"><link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/privacy/consent.css">
+  <script src="assets/privacy/config.js"></script>
+  <script src="assets/privacy/consent.js"></script>
   <!-- locale bootstrap -->
   <script type="module" src="app.mjs"></script>
 </head>
@@ -33,6 +36,8 @@
         <div class="actions"><a class="button primary" href="{{link.demo}}" data-link="demo" data-i18n="liveDemo">{{liveDemo}}</a><a class="button" href="#installation" data-i18n="getStarted">{{getStarted}}</a></div>
         <a class="text-link" href="{{link.repository}}" data-link="repository" data-i18n="viewGithub">{{viewGithub}}</a>
         <p class="fine-print" data-i18n="heroNote">{{heroNote}}</p>
+        <ul class="project-traits"><li data-i18n="traitOpen">{{traitOpen}}</li><li data-i18n="traitLight">{{traitLight}}</li><li data-i18n="traitLanguages">{{traitLanguages}}</li></ul>
+        <!-- original Bagu -->
       </div>
       <figure class="hero-preview" data-reveal>
         <div class="preview-top"><span data-i18n="previewLabel">{{previewLabel}}</span><span>v{{version}}</span></div>
@@ -42,6 +47,7 @@
     </section>
     <section class="section features" id="features" aria-labelledby="features-title">
       <div class="section-heading"><h2 id="features-title" data-i18n="featuresTitle">{{featuresTitle}}</h2><p data-i18n="featuresIntro">{{featuresIntro}}</p></div>
+      <a class="text-link" href="./demo/#parametres" data-i18n="openSettings">{{openSettings}}</a>
       <div class="tour-tabs" role="tablist" aria-label="{{tourLabel}}" id="tour-tabs">
         <button role="tab" id="tour-profile" aria-selected="true" aria-controls="tour-panel" data-tour="profile" data-i18n="tab.profile">{{tab.profile}}</button>
         <button role="tab" id="tour-sona" aria-selected="false" aria-controls="tour-panel" tabindex="-1" data-tour="sona" data-i18n="tab.sona">{{tab.sona}}</button>
@@ -52,6 +58,7 @@
         <div class="tour-copy"><h3 id="tour-title">{{tour.profile.title}}</h3><p id="tour-description">{{tour.profile.description}}</p><ul id="tour-points"><li>{{tour.profile.point1}}</li><li>{{tour.profile.point2}}</li><li>{{tour.profile.point3}}</li></ul></div>
       </div>
       <div class="capabilities">
+        <article><h3 data-i18n="themeTitle">{{themeTitle}}</h3><p data-i18n="themeBody">{{themeBody}}</p></article>
         <article><h3 data-i18n="languageTitle">{{languageTitle}}</h3><p data-i18n="languageBody">{{languageBody}}</p></article>
         <article><h3 data-i18n="setupTitle">{{setupTitle}}</h3><p data-i18n="setupBody">{{setupBody}}</p></article>
         <article><h3 data-i18n="updatesTitle">{{updatesTitle}}</h3><p data-i18n="updatesBody">{{updatesBody}}</p></article>
@@ -83,7 +90,7 @@
       <details><summary data-i18n="q1">{{q1}}</summary><p data-i18n="a1">{{a1}}</p></details><details><summary data-i18n="q2">{{q2}}</summary><p data-i18n="a2">{{a2}}</p></details><details><summary data-i18n="q3">{{q3}}</summary><p data-i18n="a3">{{a3}}</p></details><details><summary data-i18n="q4">{{q4}}</summary><p data-i18n="a4">{{a4}}</p></details><details><summary data-i18n="q5">{{q5}}</summary><p data-i18n="a5">{{a5}}</p></details><details><summary data-i18n="q6">{{q6}}</summary><p data-i18n="a6">{{a6}}</p></details><details><summary data-i18n="q7">{{q7}}</summary><p data-i18n="a7">{{a7}}</p></details>
     </div></section>
   </main>
-  <footer class="site-footer"><div class="section footer-inner"><div><strong>{{projectName}}</strong><p><span data-i18n="creator">{{creator}}</span> <a id="creator-link" href="https://kirbytrim.buzz/">Trim</a>.</p></div><nav aria-label="Project links" id="footer-nav"><a href="{{link.repository}}" data-link="repository" data-i18n="github">{{github}}</a><a href="{{link.docs}}" data-link="docs" data-i18n="docs">{{docs}}</a><a href="{{link.license}}" data-link="license" data-i18n="license">{{license}}</a><a href="{{link.notices}}" data-link="notices" data-i18n="notices">{{notices}}</a><a href="#community" data-i18n="communityFooter">{{communityFooter}}</a></nav><p class="legal" data-i18n="nonAffiliation">{{nonAffiliation}}</p></div></footer>
+  <footer class="site-footer"><div class="section footer-inner"><div><strong>{{projectName}}</strong><p><span data-i18n="creator">{{creator}}</span> <a id="creator-link" href="https://kirbytrim.buzz/">Trim</a>.</p></div><nav aria-label="Project links" id="footer-nav"><a href="{{link.repository}}" data-link="repository" data-i18n="github">{{github}}</a><a href="{{link.docs}}" data-link="docs" data-i18n="docs">{{docs}}</a><a href="{{link.license}}" data-link="license" data-i18n="license">{{license}}</a><a href="{{link.notices}}" data-link="notices" data-i18n="notices">{{notices}}</a><a href="./demo/#parametres" data-i18n="openSettings">{{openSettings}}</a><a href="#community" data-i18n="communityFooter">{{communityFooter}}</a></nav><p class="legal" data-i18n="nonAffiliation">{{nonAffiliation}}</p></div></footer>
   <p id="language-status" class="language-status" role="status" hidden></p>
   <dialog id="viewer" aria-labelledby="viewer-heading"><div class="viewer-head"><h2 id="viewer-heading" data-i18n="viewerTitle">{{viewerTitle}}</h2><button id="close-viewer" autofocus data-i18n="close">{{close}}</button></div><div class="viewer-image"><img id="viewer-image" alt=""><p id="viewer-status" role="status"></p></div><div class="viewer-controls"><button id="previous-shot" data-i18n="previous">{{previous}}</button><p id="viewer-caption" aria-live="polite"></p><button id="next-shot" data-i18n="next">{{next}}</button></div></dialog>
   <noscript><p class="section" data-i18n="noScript">{{noScript}}</p><style>.screenshot-button{cursor:default}.nav-wrap{flex-wrap:wrap}#navigation{display:flex;position:static;flex-wrap:wrap;order:4;width:100%}.menu-toggle{display:none}</style></noscript>

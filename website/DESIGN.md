@@ -1,5 +1,18 @@
 # Project showcase direction
 
+## V2 direction, 13 November 2026
+
+Trim supplied a cream/orange/red showcase reference and the original Bagu PNG.
+Use its split product introduction and raised actions, keeping the original
+settings wrench and actual screenshots instead of the illustrated console.
+Bagu is copied unchanged; no new Nintendo artwork is generated. Orange signals
+actions, red emphasizes 3DS. The floating glass header keeps navigation present
+over screenshots; blur stays in this one surface, with a solid fallback.
+ENERGY 2 / RHYTHM 3 / MOTION 2; reduced motion removes transitions.
+Preferences and installation controls serve real functions, with no public updater.
+
+## Earlier direction
+
 Modern presentation of the existing Nintendo 3DS-inspired personal website.
 ENERGY 2 / RHYTHM 3 / MOTION 2. Direction supplied by Trim's showcase brief.
 

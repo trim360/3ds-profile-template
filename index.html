@@ -9,8 +9,11 @@
   <title>Profil · Menu principal</title>
   <link rel="icon" type="image/png" href="assets/settings-3ds.png">
   <link rel="stylesheet" href="style.css?v=1.2.0">
+  <link rel="stylesheet" href="assets/privacy/consent.css">
+  <script src="assets/privacy/config.js"></script>
+  <script src="assets/privacy/consent.js"></script>
   <script src="config.js" defer></script>
-  <script type="module" src="script.js?v=1.2.0"></script>
+  <script type="module" src="script.js?v=privacy-20261114"></script>
 </head>
 <body>
   <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -71,6 +74,21 @@
             <p class="audio-note" id="audio-note">Ajoute un fichier audio autorisé et renseigne son chemin dans config.js.</p>
             <p class="storage-note" id="storage-note">Tes réglages sont enregistrés sur cet appareil.</p>
           </div>
+          <div class="preferences-grid">
+            <fieldset><legend data-i18n="appearance">Apparence</legend>
+              <label><span data-i18n="theme">Thème</span><select id="theme-select"><option value="classic" data-i18n="themeClassic">3DS classique</option><option value="light" data-i18n="themeLight">Clair</option><option value="night" data-i18n="themeNight">Nuit</option></select></label>
+              <label><span data-i18n="accent">Couleur des commandes</span><select id="accent-select"><option value="orange" data-i18n="accentOrange">Orange eShop</option><option value="red" data-i18n="accentRed">Rouge 3DS</option><option value="blue" data-i18n="accentBlue">Bleu Internet</option></select></label>
+              <label><input id="animations-enabled" type="checkbox" checked><span data-i18n="animations">Animations légères</span></label>
+            </fieldset>
+            <fieldset><legend data-i18n="accessibility">Accessibilité et langue</legend>
+              <label><input id="readable-enabled" type="checkbox"><span data-i18n="readable">Texte plus grand et contraste renforcé</span></label>
+              <label><input id="interface-sounds" type="checkbox"><span data-i18n="interfaceSounds">Retour sonore des boutons</span></label>
+              <label><span data-i18n="language">Langue</span><select id="settings-language"><option value="en">English</option><option value="fr">Français</option></select></label>
+              <p data-i18n="keyboardHelp">Tab pour parcourir, Entrée pour ouvrir, Échap pour revenir au menu.</p>
+            </fieldset>
+          </div>
+          <section class="project-information"><h3 data-i18n="ownerTitle">Gestion du profil</h3><p data-i18n="ownerHint">L’édition et les mises à jour sont réservées au propriétaire. En hébergement statique, utilise Easy Setup.</p><a class="small-button" href="assets/owner/index.html" data-i18n="ownerOpen">Espace propriétaire</a></section>
+          <section class="project-information"><h3 data-i18n="information">À propos du projet</h3><p id="installed-version"></p><p><a href="https://github.com/trim360/3ds-profile-template" target="_blank" rel="noopener noreferrer" data-i18n="projectSource">Code source du projet</a> · <a href="LICENSE" data-i18n="license">Licence</a> · <a href="NOTICE" data-i18n="attribution">Crédits et attributions</a></p><p data-i18n="independent">Projet indépendant, sans affiliation ni approbation de Nintendo.</p></section>
         </section>
       </main>
       <div class="audio-error" id="audio-error" role="alert" hidden><p id="audio-error-message"></p><button class="small-button" id="retry-audio" data-audio-control data-i18n="retry">Réessayer le chargement</button></div>
@@ -81,12 +99,10 @@
       </footer>
     </div>
     <div class="site-tools">
+      <a class="small-button" href="#parametres" data-i18n="settings">Paramètres</a>
       <label class="language-control"><span data-i18n="language">Langue</span><select id="language-select"><option value="en">English</option><option value="fr">Français</option></select></label>
-      <button class="small-button" id="check-updates" data-i18n="checkUpdates">Vérifier les mises à jour</button>
     </div>
     <p class="storage-note" id="language-status" role="status" hidden></p>
-    <p class="storage-note" id="update-status" role="status" hidden></p>
-    <aside class="audio-error update-notice" id="update-notice" role="status" hidden><p><span data-i18n="updateAvailable">Une nouvelle mise à jour est disponible !</span><br><span id="update-version"></span></p><a class="small-button" id="view-update" target="_blank" rel="noopener noreferrer" data-i18n="viewUpdate">Voir la mise à jour</a> <button class="small-button" id="dismiss-update" data-i18n="later">Plus tard</button></aside>
     <p class="storage-note" id="asset-status" role="status" hidden></p>
     <details class="credits">
       <summary data-i18n="credits">Crédits : Trim</summary>

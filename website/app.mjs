@@ -1,9 +1,11 @@
 import { site, links, screenshots, chooseLanguage } from './config.mjs';
+import { loadPreferences, applyPreferences, savePreferences } from './demo/lib/preferences.mjs';
+applyPreferences(loadPreferences());
 
 const $ = id => document.getElementById(id);
 const english = JSON.parse($('messages').textContent);
 const dictionaries = new Map([['en', english]]);
-let language = 'en', messages = english, tour = 'profile', operatingSystem = 'windows', viewerIndex = 0, opener, copyState = '';
+let language = 'en', messages = english, tour = 'profile', operatingSystem = 'windows', viewerIndex = 0, opener, copyState = '', activeSection = 'home';
 const commands = { windows: '.\\setup.bat', linux: 'bash setup.sh' };
 const t = (key, values = {}) => String(messages[key] ?? english[key] ?? key).replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
 for (const anchor of document.querySelectorAll('[data-link]')) anchor.href = links[anchor.dataset.link];
@@ -60,6 +62,7 @@ function applyLanguage() {
   document.querySelector('.source-links').setAttribute('aria-label', t('sourceLinksLabel'));
   document.querySelector('.download').textContent = t('download', { version: site.version });
   renderTour(); renderInstallation(); if ($('viewer').open) renderViewer(false);
+  requestAnimationFrame(updateIndicator);
 }
 async function setLanguage(value) {
   $('language-status').hidden = true;
@@ -72,6 +75,7 @@ async function setLanguage(value) {
     }
     language = value; messages = dictionaries.get(value);
     try { localStorage.setItem('showcaseLanguage', value); } catch {}
+    const preferences = loadPreferences(); preferences.language = value; savePreferences(preferences);
   } catch {
     language = 'en'; messages = english; $('language-status').textContent = english.translationError; $('language-status').hidden = false;
   }
@@ -81,9 +85,34 @@ $('language').addEventListener('change', event => void setLanguage(event.target.
 function menu(open, focus = false) {
   $('navigation').classList.toggle('is-open', open); $('menu-toggle').setAttribute('aria-expanded', String(open));
   if (focus) $('menu-toggle').focus();
+  if (open) requestAnimationFrame(updateIndicator);
 }
 $('menu-toggle').addEventListener('click', () => menu($('menu-toggle').getAttribute('aria-expanded') !== 'true'));
-$('navigation').addEventListener('click', event => { if (event.target.closest('a')) menu(false); });
+$('navigation').addEventListener('click', event => {
+  const link = event.target.closest('a');
+  if (link?.hash && link.origin === location.origin) setActiveSection(link.hash.slice(1));
+  if (link) menu(false);
+});
+function updateIndicator() {
+  const link = $('navigation').querySelector(`a[href="#${activeSection}"]`);
+  if (!link || !link.offsetWidth) return;
+  for (const [key,value] of Object.entries({x:link.offsetLeft,y:link.offsetTop,width:link.offsetWidth,height:link.offsetHeight})) $('navigation').style.setProperty('--active-'+key, value+'px');
+}
+function setActiveSection(id) {
+  activeSection = id;
+  for (const link of $('navigation').querySelectorAll('a[href^="#"]')) {
+    if (link.hash === '#'+id) link.setAttribute('aria-current','location'); else link.removeAttribute('aria-current');
+  }
+  updateIndicator();
+}
+if ('ResizeObserver' in window) new ResizeObserver(updateIndicator).observe($('navigation'));
+else window.addEventListener('resize', updateIndicator);
+const sectionObserver = 'IntersectionObserver' in window && new IntersectionObserver(entries => {
+  const entry = entries.find(entry => entry.isIntersecting);
+  if (entry) setActiveSection(entry.target.id);
+}, { rootMargin: '-15% 0px -60% 0px' });
+for (const id of ['home','features','screenshots','installation','faq']) if (sectionObserver) sectionObserver.observe($(id));
+setActiveSection('home');
 function tabs(group, attribute, select) {
   const buttons = [...group.querySelectorAll('[role=tab]')];
   group.addEventListener('click', event => { const button = event.target.closest('[role=tab]'); if (button) select(button.dataset[attribute]); });
@@ -122,10 +151,15 @@ for (const image of document.querySelectorAll('img:not(#viewer-image)')) image.a
   if (image.nextElementSibling?.classList.contains('image-failed')) return;
   const notice = document.createElement('p'); notice.className = 'image-failed'; notice.dataset.i18n = 'imageError'; notice.textContent = t('imageError'); image.after(notice);
 });
-if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if ('IntersectionObserver' in window && loadPreferences().animations && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.documentElement.classList.add('motion-ready');
   const observer = new IntersectionObserver(entries => { for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }, { threshold: .1 });
   document.querySelectorAll('[data-reveal]').forEach(node => observer.observe(node));
 }
-let saved; try { saved = localStorage.getItem('showcaseLanguage'); } catch {}
+let saved = loadPreferences().language; try { saved ||= localStorage.getItem('showcaseLanguage'); } catch {}
+window.addEventListener('pageshow', () => {
+  const preferences = loadPreferences();
+  applyPreferences(preferences);
+  if (preferences.language && preferences.language !== language) void setLanguage(preferences.language);
+});
 await setLanguage(chooseLanguage(navigator.languages || [navigator.language], saved));
