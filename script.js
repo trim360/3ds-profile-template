@@ -121,6 +121,7 @@ try {
   if (saved && Number.isFinite(saved.volume) && saved.volume >= 0 && saved.volume <= 1) volume = saved.volume;
 } catch { storageAvailable = false; }
 music.volume = volume;
+music.loop = config.audioDefaults.loop === true;
 if (!musicUrl) enabled = false;
 
 function savePreferences() {

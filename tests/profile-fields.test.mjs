@@ -30,3 +30,11 @@ test('profile fields round-trip through saving and keep earlier data intact', as
   assert.deepEqual([after.status, after.favoriteGames, after.consoles, after.timezone, after.personalColor, after.mascot.name], ['En pause', ['Zelda', 'Animal Crossing'], ['3DS XL'], 'Europe/Paris', '#2288aa', 'Mochi']);
   for (const key of ['name', 'about', 'bio', 'links', 'pages', 'interests', 'appearance', 'music']) assert.deepEqual(after[key], before[key], key);
 });
+
+test('audio loop is an optional owner setting that defaults to the previous behaviour (play once)', () => {
+  assert.equal(normalizeConfig({}).audioDefaults.loop, false);
+  assert.equal(normalizeConfig({ audioDefaults: { enabled: false, volume: 0.5, sounds: true } }).audioDefaults.loop, false);
+  assert.equal(normalizeConfig({ audioDefaults: { loop: true } }).audioDefaults.loop, true);
+  assert.equal(normalizeConfig({ audioDefaults: { loop: 'yes' } }).audioDefaults.loop, false);
+  assert.deepEqual(validateConfig({ audioDefaults: { loop: true } }), []);
+});

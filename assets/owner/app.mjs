@@ -159,6 +159,7 @@ function render(){
   field(panel,'J’ai le droit de diffuser ce fichier sur mon site',profile.musicCredit.rightsConfirmed,value=>profile.musicCredit.rightsConfirmed=value,{type:'checkbox'});
   field(panel,'Musique activée par défaut',profile.audioDefaults.enabled,value=>profile.audioDefaults.enabled=value,{type:'checkbox'});
   const volume=field(panel,'Volume initial (0 à 100)',Math.round(profile.audioDefaults.volume*100),value=>profile.audioDefaults.volume=value/100,{type:'number'});volume.min='0';volume.max='100';
+  field(panel,'Lire la musique en boucle',profile.audioDefaults.loop===true,value=>profile.audioDefaults.loop=value,{type:'checkbox'});
   field(panel,'Retour sonore activé par défaut',profile.audioDefaults.sounds,value=>profile.audioDefaults.sounds=value,{type:'checkbox'});
  }
  if(tab==='appearance'){
