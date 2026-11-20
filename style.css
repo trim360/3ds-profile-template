@@ -320,3 +320,6 @@ html[data-decorations=false] .project-information { border-top-style: solid; }
 html[data-motion=soft] .menu-button:hover { transform: none; }
 html[data-motion=soft] .page { animation: none; }
 html[data-motion=soft] * { transition-duration: 60ms !important; }
+/* Personal colour chosen by the owner: a discreet accent on the portrait frame and name only. */
+html[data-personal=true] .portrait-frame { border-color: var(--personal-color); box-shadow: 0 0 0 2px var(--personal-color), 0 3px 4px #64705520; }
+html[data-personal=true] .profile-details h3 { border-bottom: 3px solid var(--personal-color); width: fit-content; max-width: 100%; }

@@ -121,6 +121,18 @@ function render(){
   for(const [key,label]of [['name','Nom affiché'],['pronouns','Pronoms'],['title','Titre du site'],['domain','Libellé du domaine'],['about','À propos'],['bio','Biographie'],['website','Site web']])field(panel,label,profile[key],value=>profile[key]=value,{rows:['about','bio'].includes(key)?4:undefined});
   for(const [key,label]of [['avatar','Avatar'],['cover','Couverture']]){const input=field(panel,label,profile[key],value=>profile[key]=value);media(panel,'image',value=>{profile[key]=value;input.value=value;});}
   field(panel,'Centres d’intérêt (séparés par une virgule)',profile.interests.join(', '),value=>profile.interests=value.split(',').map(s=>s.trim()).filter(Boolean));
+  const list=value=>value.split(',').map(item=>item.trim()).filter(Boolean);
+  field(panel,'Statut personnalisé (une phrase courte)',profile.status,value=>profile.status=value);
+  field(panel,'Jeux favoris (séparés par une virgule)',profile.favoriteGames.join(', '),value=>profile.favoriteGames=list(value));
+  field(panel,'Consoles possédées (séparées par une virgule)',profile.consoles.join(', '),value=>profile.consoles=list(value));
+  const zone=field(panel,'Fuseau horaire (ex. Europe/Paris, laisser vide pour ne rien afficher)',profile.timezone,value=>profile.timezone=value);
+  try{const zones=Intl.supportedValuesOf('timeZone'),datalist=element('datalist');datalist.id='time-zones';for(const name of zones){const option=element('option');option.value=name;datalist.append(option);}zone.setAttribute('list','time-zones');panel.append(datalist);}catch{}
+  const color=field(panel,'Couleur personnelle (cadre de la photo et du nom)',profile.personalColor||'#a76923',value=>profile.personalColor=value,{type:'color'});
+  panel.append(button('Retirer la couleur personnelle',()=>{profile.personalColor='';color.value='#a76923';changed();},'Retirer la couleur personnelle'));
+  const mascot=element('fieldset');mascot.append(element('legend','Personnage ou mascotte'));
+  field(mascot,'Nom',profile.mascot.name,value=>profile.mascot.name=value);
+  const mascotImage=field(mascot,'Image (chemin public ou URL)',profile.mascot.image,value=>profile.mascot.image=value);media(mascot,'image',value=>{profile.mascot.image=value;mascotImage.value=value;});
+  field(mascot,'Crédit de l’image',profile.mascot.credit,value=>profile.mascot.credit=value);panel.append(mascot);
   projectRows(panel,profile.projects);
  }
  if(tab==='gallery')imageRows(panel,profile.gallery);

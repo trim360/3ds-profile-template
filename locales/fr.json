@@ -112,7 +112,13 @@
     "textSizeSmall": "Plus petit",
     "textSizeNormal": "Normal",
     "textSizeLarge": "Plus grand",
-    "textSizeXLarge": "Très grand"
+    "textSizeXLarge": "Très grand",
+    "status": "Statut",
+    "favoriteGames": "Jeux favoris",
+    "consoles": "Consoles",
+    "timezone": "Fuseau horaire",
+    "localTime": "{zone} · il y est {time}",
+    "mascot": "Personnage ou mascotte"
   },
   "setup": {
     "iconMissing": "Fichier d’icône introuvable. Utilise un fichier existant, un logo intégré ou une adresse HTTP(S) complète.",

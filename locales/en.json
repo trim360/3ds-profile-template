@@ -112,7 +112,13 @@
     "textSizeSmall": "Smaller",
     "textSizeNormal": "Normal",
     "textSizeLarge": "Larger",
-    "textSizeXLarge": "Largest"
+    "textSizeXLarge": "Largest",
+    "status": "Status",
+    "favoriteGames": "Favourite games",
+    "consoles": "Consoles",
+    "timezone": "Time zone",
+    "localTime": "{zone} · it is {time} there",
+    "mascot": "Character or mascot"
   },
   "setup": {
     "iconMissing": "Icon file not found. Use an existing file, a preset, or a full HTTP(S) URL.",
