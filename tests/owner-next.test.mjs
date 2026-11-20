@@ -42,7 +42,7 @@ test('draft preview needs an owner session, shows the unsaved draft and never pu
   assert.equal(await readFile(path.join(app.root, 'user-content/profile.json'), 'utf8').catch(() => ''), stored);
   assert.equal((await app.current()).profile.name, (await loadProfile(app.root)).name);
   const html = await app.request('/owner-api/preview/index.html');
-  assert.equal(html.status, 200); assert.equal(html.headers.get('x-frame-options'), 'SAMEORIGIN'); assert.match(html.headers.get('content-security-policy'), /frame-ancestors 'self'/);
+  assert.equal(html.status, 200); assert.match(await html.text(), /\.privacy-banner\{display:none!important\}/); assert.equal(html.headers.get('x-frame-options'), 'SAMEORIGIN'); assert.match(html.headers.get('content-security-policy'), /frame-ancestors 'self'/);
   assert.equal((await app.request('/owner-api/preview/style.css')).status, 200);
   assert.equal((await app.request('/owner-api/profile')).headers.get('x-frame-options'), 'DENY');
 });
