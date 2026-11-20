@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased (next release, not yet published)
+
+- Owner dashboard: live preview of unpublished changes on the top screen, unsaved-changes
+  badge with discard, page reordering (buttons and drag and drop), duplication, drafts,
+  per-page menu icons, confirmed removal, restoration of deleted pages, backups tab with
+  reversible restore, cream 3DS-style restyle.
+- Appearance: DSi, eShop and Network themes, a custom palette with automatic WCAG
+  contrast checks, and owner-chosen text size, shape, spacing, layout, panel style,
+  decorations and animation intensity. Visitors keep their own theme, accent, text size,
+  animation and readability choices.
+- Optional profile details: status, favourite games, consoles, time zone, mascot,
+  personal colour. Optional music loop.
+- Compatibility: configuration schema stays at 2; 2.1.0 data loads unchanged (tested from a
+  real 2.1.0 installation). The `website/` showcase folder is unchanged.
+- Not included: block-based rich content editor, avatar cropping, a restore button for
+  finished updates, additional interface languages (the README documents the manual
+  update restore).
+
 ## 2.1.0
 
 - Administration locale facultative dans le template distribué : compte privé,

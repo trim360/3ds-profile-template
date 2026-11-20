@@ -9,10 +9,17 @@
 <body>
   <main class="owner-console">
     <section class="top-screen" aria-labelledby="screen-title">
-      <div class="status-bar"><span>Internet · Site personnel</span><span>Compte local</span></div>
-      <header><img src="../profile.svg" width="48" height="48" alt=""><h1 id="screen-title">Paramètres du propriétaire</h1></header>
-      <div class="identity"><img id="avatar" src="../avatar.svg" alt="Avatar du profil" width="80" height="80"><div><strong id="profile-name">3DS Personal Website</strong><p id="mode-message" role="status">Vérification du mode d’hébergement…</p></div></div>
-      <p class="screen-note">Un compte propre à ton site. Aucune connexion aux serveurs Nintendo.</p>
+      <div class="status-bar"><span>Internet · Site personnel</span><span id="dirty" role="status" class="dirty-badge" hidden></span><span>Compte local</span></div>
+      <div id="identity-screen">
+        <header><img src="../profile.svg" width="48" height="48" alt=""><h1 id="screen-title">Paramètres du propriétaire</h1></header>
+        <div class="identity"><img id="avatar" src="../avatar.svg" alt="Avatar du profil" width="80" height="80"><div><strong id="profile-name">3DS Personal Website</strong><p id="mode-message" role="status">Vérification du mode d’hébergement…</p></div></div>
+        <p class="screen-note">Un compte propre à ton site. Aucune connexion aux serveurs Nintendo.</p>
+      </div>
+      <div id="preview-screen" hidden>
+        <iframe id="preview" title="Aperçu du site avec tes modifications non publiées" loading="lazy"></iframe>
+        <p id="preview-status" class="preview-status" role="status"></p>
+        <p class="screen-note">Aperçu en direct. Rien n’est publié tant que tu n’as pas choisi « Enregistrer et publier ».</p>
+      </div>
     </section>
     <section class="bottom-screen" aria-label="Commandes du propriétaire">
       <p id="feedback" role="status" aria-live="polite"></p>
@@ -22,17 +29,18 @@
         <h2>Connexion au compte local</h2>
         <label>Identifiant du site<input name="username" autocomplete="username" required minlength="3" maxlength="64"></label>
         <label>Mot de passe<input name="password" type="password" autocomplete="current-password" required maxlength="128"></label>
-        <button type="submit">Se connecter</button>
+        <button type="submit" class="primary">Se connecter</button>
         <button type="button" id="forgot">Mot de passe oublié</button>
       </form>
       <section id="editor" hidden>
         <div class="owner-actions"><a href="../../" target="_blank" rel="noopener">Voir le site</a><button type="button" id="logout">Se déconnecter</button></div>
         <nav id="editor-tabs" aria-label="Réglages du site"></nav>
-        <form id="editor-form"><div id="editor-panel"></div><div class="save-bar"><button type="submit" id="save">Enregistrer et publier</button><button type="button" id="reload">Recharger les données</button></div></form>
+        <form id="editor-form"><div id="editor-panel"></div><div class="save-bar"><span id="save-state" class="save-state" data-state="saved">Tout est publié</span><button type="submit" id="save" class="primary">Enregistrer et publier</button><button type="button" id="discard" disabled>Annuler les modifications</button><button type="button" id="reload">Recharger les données</button></div></form>
       </section>
       <div class="bottom-bar"><a href="../../#parametres">Retour aux paramètres</a><button type="button" id="retry" hidden>Réessayer la connexion au backend</button></div>
     </section>
   </main>
   <dialog id="recovery" aria-labelledby="recovery-title"><h2 id="recovery-title">Récupération locale</h2><p>Aucun e-mail de réinitialisation n’est envoyé. Seule une personne ayant accès aux fichiers du serveur peut réinitialiser le compte.</p><p>Ouvre setup, choisis <strong>o</strong> puis confirme la réinitialisation. Tu peux aussi lancer :</p><pre>node scripts/owner.mjs reset</pre><p>Les profils et médias sont conservés ; les anciennes sessions deviennent invalides.</p><button type="button" id="close-recovery">Fermer</button></dialog>
+  <dialog id="confirm" aria-labelledby="confirm-title"><h2 id="confirm-title">Confirmation</h2><p id="confirm-text"></p><div class="dialog-actions"><button type="button" id="confirm-no">Garder tel quel</button><button type="button" id="confirm-yes" class="primary">Confirmer</button></div></dialog>
 </body>
 </html>

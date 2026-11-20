@@ -1,0 +1,78 @@
+// Upgrade path from a real 2.1.0 installation (extracted from the v2.1.0 Git tag) to the current tree.
+// Skipped when the tag is not available (for example in a ZIP export without Git history).
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, readdir } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
+import { ROOT, loadProfile, saveProfile, buildSite, managedFiles, sha256, exists } from '../lib/project.mjs';
+import { configureOwner, verifyOwner } from '../lib/owner-auth.mjs';
+import { startOwnerServer } from '../lib/owner-server.mjs';
+import { installRelease, installedVersion } from '../scripts/update.mjs';
+import { packageFixture } from './helpers.mjs';
+import { DEFAULT_CONFIG } from '../lib/config.mjs';
+
+function tagAvailable() { try { execFileSync('git', ['-C', ROOT, 'rev-parse', '--verify', '--quiet', 'refs/tags/v2.1.0^{commit}'], { stdio: 'ignore' }); return true; } catch { return false; } }
+
+async function legacyInstallation(t) {
+  const parent = await realpath(os.tmpdir()), root = await mkdtemp(path.join(parent, '3ds-upgrade-'));
+  t.after(async () => { const resolved = await realpath(root); if (path.dirname(resolved) === parent && path.basename(resolved).startsWith('3ds-upgrade-')) await rm(resolved, { recursive: true, force: true }); });
+  // Rebuild the tagged tree blob by blob (portable: no tar or archive tool needed).
+  const names = execFileSync('git', ['-C', ROOT, 'ls-tree', '-r', '-z', '--name-only', 'v2.1.0'], { encoding: 'utf8' }).split(String.fromCharCode(0)).filter(Boolean);
+  for (const name of names) { const target = path.join(root, ...name.split('/')); await mkdir(path.dirname(target), { recursive: true }); await writeFile(target, execFileSync('git', ['-C', ROOT, 'show', `v2.1.0:${name}`], { maxBuffer: 64 * 1024 * 1024 })); }
+  return root;
+}
+async function currentPackage(version) {
+  const files = [];
+  for (const file of await managedFiles(ROOT)) {
+    if (file === 'template-manifest.json') continue;
+    let bytes = await readFile(path.join(ROOT, file));
+    if (file === 'version.json') bytes = Buffer.from(JSON.stringify({ version, schemaVersion: 2, minimumNode: 22, repository: 'trim360/3ds-profile-template' }));
+    files.push({ path: file, sha256: sha256(bytes), dataBase64: bytes.toString('base64') });
+  }
+  return packageFixture({ format: 1, version, schemaVersion: 2, minimumNode: 22, files });
+}
+const snapshot = async (root, names) => Object.fromEntries(await Promise.all(names.map(async name => [name, await exists(path.join(root, name)) ? sha256(await readFile(path.join(root, name))) : null])));
+
+test('a customised 2.1.0 installation upgrades without losing profile, pages, media, credits, translations, settings or owner account', { skip: !tagAvailable() && 'tag v2.1.0 not available' }, async t => {
+  const root = await legacyInstallation(t); assert.equal(await installedVersion(root), '2.1.0');
+  const password = 'Upgrade-test-only-2026-password'; await configureOwner(root, 'upgrade-owner', password);
+  const image = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), Buffer.alloc(24, 7)]); await mkdir(path.join(root, 'user-content/media'), { recursive: true }); await writeFile(path.join(root, 'user-content/media/image-11111111-1111-1111-1111-111111111111.png'), image);
+  const profile = await loadProfile(root);
+  await saveProfile(root, { ...profile, name: 'Camille', pronouns: 'iel', about: 'À propos conservé', bio: 'Biographie conservée', avatar: 'user-content/media/image-11111111-1111-1111-1111-111111111111.png', interests: ['jeux'],
+    links: [{ name: 'GitHub', url: 'https://github.com/example', icon: 'github' }], credits: [{ name: 'Artiste', role: 'Avatar', url: 'https://example.invalid/artiste' }], music: '', musicCredit: { owner: 'unknown', artist: '', source: '', rightsConfirmed: false },
+    language: 'fr', translations: { enabled: true, values: { en: { about: 'Kept about' } } }, appearance: { theme: 'night', accent: 'blue', animations: false, readable: true }, audioDefaults: { enabled: false, volume: 0.6, sounds: true },
+    pages: [{ id: 'sona', type: 'sona', title: 'Ma sona', content: 'Contenu à conserver', images: [{ src: 'user-content/media/image-11111111-1111-1111-1111-111111111111.png', caption: 'Légende', credit: 'Crédit' }], traits: [{ label: 'Nom', value: 'Mochi' }], visible: true }, { id: 'cachee', type: 'custom', title: 'Cachée', content: 'brouillon', visible: false }] });
+  const personal = ['config.js', 'user-content/profile.json', 'user-content/pages/sona.json', 'user-content/pages/cachee.json', 'user-content/media/image-11111111-1111-1111-1111-111111111111.png', '.owner/account.json'];
+  const before = await snapshot(root, personal); const oldCore = await snapshot(root, ['index.html', 'style.css', 'script.js', 'lib/config.mjs']);
+
+  const update = await currentPackage('2.2.0'); const result = await installRelease({ root, ...update });
+  assert.equal(await installedVersion(root), '2.2.0'); assert.deepEqual(await snapshot(root, personal), before, 'personal files are byte-for-byte unchanged');
+  const after = await snapshot(root, ['index.html', 'style.css', 'script.js', 'lib/config.mjs']); for (const file of Object.keys(after)) assert.notEqual(after[file], oldCore[file], `${file} was updated`);
+  assert.ok(await exists(path.join(root, 'lib/theme.mjs')) && await exists(path.join(root, 'lib/owner-backups.mjs')), 'new files were installed');
+  assert.ok(await exists(path.join(root, result.backup, 'script.js')), 'the replaced core files were backed up');
+
+  const upgraded = await loadProfile(root);
+  assert.deepEqual([upgraded.name, upgraded.pronouns, upgraded.about, upgraded.bio, upgraded.language, upgraded.interests], ['Camille', 'iel', 'À propos conservé', 'Biographie conservée', 'fr', ['jeux']]);
+  assert.deepEqual([upgraded.appearance.theme, upgraded.appearance.accent, upgraded.appearance.animations, upgraded.appearance.readable], ['night', 'blue', false, true]);
+  assert.deepEqual([upgraded.appearance.shape, upgraded.appearance.layout, upgraded.appearance.panel, upgraded.audioDefaults.loop, upgraded.status], ['soft', 'grid', 'raised', false, ''], 'new options take their defaults');
+  assert.deepEqual(upgraded.pages.map(page => [page.id, page.title, page.visible]), [['sona', 'Ma sona', true], ['cachee', 'Cachée', false]]);
+  assert.equal(upgraded.pages[0].images[0].credit, 'Crédit'); assert.equal(upgraded.credits[0].name, 'Artiste'); assert.equal(upgraded.translations.values.en.about, 'Kept about'); assert.deepEqual(upgraded.audioDefaults, { enabled: false, volume: 0.6, sounds: true, loop: false });
+  assert.ok(await verifyOwner(root, 'upgrade-owner', password), 'the owner can still sign in with the same password');
+
+  // The upgraded installation serves the owner dashboard, edits through it and exports a static site.
+  const app = await startOwnerServer({ root, port: 0 }); t.after(() => app.close());
+  const login = await fetch(app.url + '/owner-api/login', { method: 'POST', headers: { Origin: app.url, 'Content-Type': 'application/json' }, body: JSON.stringify({ username: 'upgrade-owner', password }) }); assert.equal(login.status, 200);
+  const cookie = login.headers.get('set-cookie').split(';')[0], { csrf } = await login.json();
+  const current = await (await fetch(app.url + '/owner-api/profile', { headers: { Cookie: cookie } })).json();
+  assert.equal((await fetch(app.url + '/owner-api/preview', { method: 'POST', headers: { Origin: app.url, Cookie: cookie, 'X-CSRF-Token': csrf, 'Content-Type': 'application/json' }, body: JSON.stringify({ profile: { status: 'Après mise à jour' } }) })).status, 200);
+  const edit = await fetch(app.url + '/owner-api/profile', { method: 'PUT', headers: { Origin: app.url, Cookie: cookie, 'X-CSRF-Token': csrf, 'Content-Type': 'application/json' }, body: JSON.stringify({ profile: Object.fromEntries(Object.keys(DEFAULT_CONFIG).map(key => [key, key === 'status' ? 'Après mise à jour' : current.profile[key]])), revision: current.revision }) });
+  assert.equal(edit.status, 200, await edit.clone().text()); assert.equal((await loadProfile(root)).status, 'Après mise à jour');
+  await buildSite(root); assert.ok(await exists(path.join(root, 'dist/lib/theme.mjs'))); assert.match(await readFile(path.join(root, 'dist/config.js'), 'utf8'), /Camille/);
+
+  // The backup taken before installing holds the exact 2.1.0 files, so the previous version can be restored by hand.
+  await app.close();
+  for (const file of ['index.html', 'style.css', 'script.js', 'lib/config.mjs']) assert.equal(sha256(await readFile(path.join(root, result.backup, file))), oldCore[file], `${file} in the backup is the 2.1.0 original`);
+  assert.ok(!await exists(path.join(root, '.update-journal.json')), 'no interrupted-update journal remains');
+});

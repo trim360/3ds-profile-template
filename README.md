@@ -177,6 +177,69 @@ the profile and media. Restart the Node process or run
 `docker compose --profile owner restart owner` after installing an update.
 This reloads the updated backend modules; sign in again afterwards.
 
+### Owner dashboard: live preview, drafts, backups (next release)
+
+The dashboard's top screen now shows your real site rendered with the changes you
+have not published yet; the bottom screen holds the controls. Nothing is published
+until you choose **Enregistrer et publier**.
+
+- A badge shows **unsaved changes**; **Annuler les modifications** returns to the
+  published version, and the browser warns before closing with unsaved changes.
+- **Pages**: reorder with the arrows or by drag and drop, duplicate, choose a menu
+  icon, keep a page as an invisible draft (untick *published*), view it in the
+  preview, and remove it after a confirmation.
+- **Deleted pages**: a page removed and published keeps its file in
+  `user-content/pages/` and can be restored from the Pages tab until you delete
+  that file yourself.
+- **Backups tab**: every publication already writes `backups/profile-…`. You can
+  list them and restore one; the current state is backed up first, so a restore is
+  itself reversible. Media files are never deleted by a restore.
+- Images and music you import appear in the preview before publishing.
+
+The preview and these actions exist only for a signed-in owner (the same session,
+origin and CSRF checks as the rest of the owner API). Static hosting is unchanged.
+
+### Appearance and themes (next release)
+
+Visitors can pick a theme, accent colour, text size, animations and the readability
+mode from the settings page; their choice stays in their own browser. Owners choose
+the starting values and the design options in the dashboard (**Apparence et langue**):
+
+| Option | Values |
+| --- | --- |
+| Theme | 3DS classic, light, night, DSi style, eShop style, Network blue, custom |
+| Button and card shape | rounded (default), square, very rounded |
+| Menu spacing | compact, normal, airy |
+| Menu layout | grid, list, compact grid |
+| Panel style | raised (default), flat, outline only |
+| Decorations | textures, dotted separators and shadows on or off |
+| Animation intensity | full, soft (no movement); reduced-motion preferences are always respected |
+| Text size | smaller, normal, larger, largest |
+
+The **custom theme** has eight colours. Readability is checked automatically
+(WCAG contrast: text 4.5:1, accent 3:1): an unreadable palette cannot be published,
+and visitors would get the classic theme instead. The DSi, eShop and Network
+themes are original palettes, not Nintendo artwork; they are also checked for
+contrast by the test suite.
+
+Optional profile details (all empty by default and never shown when empty):
+custom status, favourite games, consoles, time zone (shows the local time there),
+a character or mascot with its image credit, and a personal colour used for the
+photo frame. Music can optionally loop (`audioDefaults.loop`).
+
+### Migrating from 2.1.0 or earlier (next release)
+
+No manual migration is needed. The configuration schema stays at version 2: every
+new setting is optional and takes the previous look or behaviour by default, so
+`config.js`, `user-content/`, your media, credits, translations, settings and the
+`.owner/` account are used as they are. `tests/upgrade.test.mjs` rebuilds a real
+2.1.0 installation from its Git tag, personalises it, installs this version with the
+verified updater and checks that all of those files are byte-for-byte unchanged, that
+the owner can still sign in and edit, and that the pre-update backup contains the
+original files. Restoring a finished update is manual: copy the files from
+`backups/update-<version>-…` back; an update that fails part-way is rolled back
+automatically as before.
+
 ### Updates and backups
 
 Visitors cannot check or install updates. The public site has no update button
@@ -396,6 +459,72 @@ un dossier de sortie étranger au projet n’est pas écrasé.
 Tout fichier déployé, dont `config.js` et les médias, devient public. Ne mets
 aucun secret dans ton profil. `domain` ne change que le libellé affiché ; le DNS
 et le domaine personnalisé se règlent séparément. Setup ne publie aucun site.
+
+### Tableau de bord propriétaire : aperçu en direct, brouillons, sauvegardes (prochaine version)
+
+L’écran du haut affiche désormais ton vrai site avec les modifications non
+publiées ; l’écran du bas contient les commandes. Rien n’est publié tant que tu
+ne choisis pas **Enregistrer et publier**.
+
+- Un badge indique les **modifications non enregistrées** ; **Annuler les
+  modifications** revient à la version publiée, et le navigateur prévient avant de
+  fermer la page avec un brouillon non publié.
+- **Pages** : réorganisation avec les flèches ou par glisser-déposer, duplication,
+  icône de menu, brouillon invisible (décocher *publiée*), affichage dans l’aperçu,
+  suppression après confirmation.
+- **Pages supprimées** : une page retirée puis publiée garde son fichier dans
+  `user-content/pages/` et peut être restaurée depuis l’onglet Pages, tant que tu
+  n’as pas effacé ce fichier toi-même.
+- **Onglet Sauvegardes** : chaque publication écrit déjà `backups/profile-…`. Tu
+  peux les lister et en restaurer une ; l’état actuel est sauvegardé avant, donc la
+  restauration est elle-même réversible. Les médias ne sont jamais supprimés.
+- Les images et musiques importées apparaissent dans l’aperçu avant publication.
+
+L’aperçu et ces actions n’existent que pour un propriétaire connecté (mêmes
+contrôles de session, d’origine et CSRF que le reste de l’API). L’hébergement
+statique ne change pas.
+
+### Apparence et thèmes (prochaine version)
+
+Les visiteurs choisissent thème, couleur, taille du texte, animations et lisibilité
+dans les paramètres ; leur choix reste dans leur navigateur. Le propriétaire règle
+les valeurs de départ et le design dans **Apparence et langue** :
+
+| Option | Valeurs |
+| --- | --- |
+| Thème | 3DS classique, clair, nuit, style DSi, style eShop, bleu Network, personnalisé |
+| Forme des boutons et cartes | arrondie (défaut), carrée, très arrondie |
+| Espacement des menus | compact, normal, aéré |
+| Disposition du menu | grille, liste, grille compacte |
+| Style des panneaux | en relief (défaut), plat, contour seul |
+| Décorations | textures, séparateurs pointillés et ombres activés ou non |
+| Intensité des animations | complète, douce (sans mouvement) ; « réduire les animations » du système est toujours respecté |
+| Taille du texte | plus petit, normal, plus grand, très grand |
+
+Le **thème personnalisé** a huit couleurs. La lisibilité est vérifiée
+automatiquement (contraste WCAG : texte 4,5:1, accent 3:1) : une palette illisible
+ne peut pas être publiée, et les visiteurs recevraient le thème classique. Les
+thèmes DSi, eShop et Network sont des palettes originales, pas des visuels
+Nintendo ; leurs contrastes sont aussi vérifiés par les tests.
+
+Détails de profil facultatifs (vides par défaut, jamais affichés s’ils sont vides) :
+statut personnalisé, jeux favoris, consoles, fuseau horaire (affiche l’heure
+locale), personnage ou mascotte avec crédit d’image, couleur personnelle pour le
+cadre de la photo. La musique peut boucler (`audioDefaults.loop`).
+
+### Migrer depuis la 2.1.0 ou avant (prochaine version)
+
+Aucune migration manuelle. Le schéma de configuration reste en version 2 : chaque
+nouveau réglage est facultatif et reprend l’apparence ou le comportement
+précédent. `config.js`, `user-content/`, tes médias, crédits, traductions,
+réglages et le compte `.owner/` sont utilisés tels quels.
+`tests/upgrade.test.mjs` reconstruit une vraie installation 2.1.0 depuis son tag
+Git, la personnalise, installe cette version avec l’installateur vérifié, puis
+contrôle que ces fichiers sont identiques octet pour octet, que le propriétaire peut
+se reconnecter et éditer, et que la sauvegarde d’avant mise à jour contient les
+fichiers d’origine. Restaurer une mise à jour terminée se fait à la main (copie
+depuis `backups/update-<version>-…`) ; une mise à jour interrompue est annulée
+automatiquement, comme avant.
 
 ### Mises à jour et sauvegardes
 

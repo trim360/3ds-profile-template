@@ -103,7 +103,22 @@
     "versionUnavailable": "Version unavailable",
     "ownerTitle": "Profile management",
     "ownerHint": "Editing and updates are reserved for the owner. Static hosting uses Easy Setup.",
-    "ownerOpen": "Owner settings"
+    "ownerOpen": "Owner settings",
+    "themeDsi": "Nintendo DSi style",
+    "themeEshop": "eShop style",
+    "themeNetwork": "Network blue",
+    "themeCustom": "Owner's custom theme",
+    "textSize": "Text size",
+    "textSizeSmall": "Smaller",
+    "textSizeNormal": "Normal",
+    "textSizeLarge": "Larger",
+    "textSizeXLarge": "Largest",
+    "status": "Status",
+    "favoriteGames": "Favourite games",
+    "consoles": "Consoles",
+    "timezone": "Time zone",
+    "localTime": "{zone} · it is {time} there",
+    "mascot": "Character or mascot"
   },
   "setup": {
     "iconMissing": "Icon file not found. Use an existing file, a preset, or a full HTTP(S) URL.",
