@@ -331,7 +331,10 @@ async function changeLanguage(event) {
 $('language-select').addEventListener('change', changeLanguage);
 $('settings-language').addEventListener('change', changeLanguage);
 
-for (const [id, field] of [['theme-select','theme'],['accent-select','accent'],['animations-enabled','animations'],['readable-enabled','readable'],['interface-sounds','sounds']]) {
+// The owner's custom palette is only offered when the owner chose it (and it is readable); otherwise the option stays hidden.
+const customOption = document.querySelector('#theme-select option[value="custom"]');
+if (preferences.theme === 'custom' || config.appearance.theme === 'custom') { customOption.hidden = false; customOption.disabled = false; }
+for (const [id, field] of [['theme-select','theme'],['accent-select','accent'],['text-size-select','textSize'],['animations-enabled','animations'],['readable-enabled','readable'],['interface-sounds','sounds']]) {
   const control = $(id);
   if (control.type === 'checkbox') control.checked = preferences[field]; else control.value = preferences[field];
   control.addEventListener('change', () => {

@@ -256,3 +256,67 @@ html[data-theme=night] :is(.menu-button span,.audio-source p,#enabled-descriptio
 html[data-theme=night] .profile-details h3 { color: #f1f4f9; }
 html[data-theme=night] :is(#audio-toggle,.language-control select) { background: #344254; color: #f1f4f9; border-color: #94a2b4; }
 html[data-theme=night] :is(.menu-button,.small-button,.back-button,#audio-toggle):hover { background: #43556b; }
+
+/* ---------- Appearance system (2.2): extra themes and owner-chosen design options ----------
+   Everything below is additive: with the defaults (classic theme, soft shapes, raised panels, grid menu, normal spacing)
+   no rule here changes the existing rendering. Palettes are original; no Nintendo artwork. */
+html[data-theme=dsi] { --t-bg: #dfe3e9; --t-window: #f3f5f8; --t-ink: #2c3440; --t-muted: #4a5564; --t-line: #a9b2bf; --t-edge: #8892a2; --t-top: #ffffff; --t-bottom: #d6dbe3; --t-hover: #dbe8f7; --t-accent: #3a78c9; --t-link: #1f5aa6; --t-bar-top: #f6f8fb; --t-bar-bottom: #d9dee6; }
+html[data-theme=eshop] { --t-bg: #ffe2bd; --t-window: #fff8ee; --t-ink: #46321f; --t-muted: #6a4d33; --t-line: #dcae78; --t-edge: #c58a4a; --t-top: #ffffff; --t-bottom: #ffe6c6; --t-hover: #ffd29c; --t-accent: #d9560f; --t-link: #a53e05; --t-bar-top: #ffefd9; --t-bar-bottom: #ffd9ab; }
+html[data-theme=network] { --t-bg: #d3e8f5; --t-window: #f3f9fd; --t-ink: #223c52; --t-muted: #3d5d77; --t-line: #8fb3cc; --t-edge: #6c98b6; --t-top: #ffffff; --t-bottom: #d1e5f2; --t-hover: #bfe0f4; --t-accent: #1d76b8; --t-link: #135a92; --t-bar-top: #eaf4fb; --t-bar-bottom: #c9deed; }
+html[data-skin=themed] { background: var(--t-bg); color: var(--t-ink); --cream: var(--t-window); --ink: var(--t-ink); --line: var(--t-line); --control-accent: var(--t-accent); --blue: var(--t-link); --orange: var(--t-accent); }
+html[data-skin=themed] .settings-window { border-color: var(--t-edge); box-shadow: 0 3px 0 var(--t-line), 0 10px 24px #00000014; }
+html[data-skin=themed] main { background: none; }
+html[data-skin=themed] .console-heading { border-bottom-color: var(--t-line); }
+html[data-skin=themed] :is(.menu-button, .small-button, .back-button, .copy-button, #audio-toggle, .social-list li, .language-control select, .preferences-grid select) { background: linear-gradient(var(--t-top), var(--t-bottom)); border-color: var(--t-edge); color: var(--t-ink); }
+html[data-skin=themed] .menu-button { border-bottom-color: var(--t-accent); }
+html[data-skin=themed] .menu-icon-plate { background: linear-gradient(var(--t-top), var(--t-bottom)); border-color: var(--t-edge); }
+html[data-skin=themed] :is(.portrait-frame, .content-gallery img) { background: var(--t-top); border-color: var(--t-edge); }
+html[data-skin=themed] .bottom-bar { background: linear-gradient(var(--t-bar-top), var(--t-bar-bottom)); border-top-color: var(--t-line); }
+html[data-skin=themed] :is(.menu-button span, .small-button, .back-button, .copy-button, #audio-toggle, .social-list strong, .profile-details h3, .page-heading h2) { color: var(--t-ink); text-shadow: none; }
+html[data-skin=themed] :is(.status-bar, .page-heading > span, .field-label, .visit-count, .list-note, .audio-source p, .audio-note, .storage-note, #enabled-description, #volume-value, #music-status, .home-indicator, .character-traits dt, .social-list a > span > span, .credits, .clipboard-status) { color: var(--t-muted); }
+html[data-skin=themed] :is(.content-section, .audio-source, .audio-setting) { border-color: var(--t-line); }
+html[data-skin=themed] :is(.social-icon, .external-icon, #audio-toggle svg, .domain svg) { color: var(--t-link); }
+@media (hover: hover) { html[data-skin=themed] :is(.menu-button, .small-button, .back-button, .copy-button, #audio-toggle):hover { background: var(--t-hover); border-color: var(--t-accent); } html[data-skin=themed] .social-list a:hover { background: var(--t-hover); } }
+html[data-skin=themed] .switch input:checked + .switch-track { background: var(--t-accent); }
+/* Text size: scales the page content only, so the status and bottom bars keep their layout. */
+html[data-text=small] .page { zoom: .92; }
+html[data-text=large] .page { zoom: 1.15; }
+html[data-text=xlarge] .page { zoom: 1.3; }
+/* Menu shape */
+html[data-shape=square] { --r-card: 6px; --r-button: 3px; --r-plate: 4px; }
+html[data-shape=round] { --r-card: 34px; --r-button: 24px; --r-plate: 50%; }
+html[data-shape=square] :is(.menu-button, .social-list li, .settings-window), html[data-shape=round] :is(.menu-button, .social-list li) { border-radius: var(--r-card); }
+html[data-shape=square] :is(.small-button, .back-button, .copy-button, #audio-toggle, .language-control select), html[data-shape=round] :is(.small-button, .back-button, .copy-button, #audio-toggle, .language-control select) { border-radius: var(--r-button); }
+html[data-shape=square] .menu-icon-plate, html[data-shape=round] .menu-icon-plate { border-radius: var(--r-plate); }
+/* Menu spacing */
+html[data-spacing=compact] .menu-grid { gap: 11px; margin-block: 18px 12px; }
+html[data-spacing=compact] .menu-button { min-height: 150px; padding-block: 16px; gap: 12px; }
+html[data-spacing=compact] .page { padding-block: 18px 24px; }
+html[data-spacing=roomy] .menu-grid { gap: 34px; margin-block: 40px 30px; }
+html[data-spacing=roomy] .page { padding-block: 36px 46px; }
+html[data-spacing=roomy] .social-list { gap: 16px; }
+/* Menu layout */
+html[data-layout=list] .menu-grid { grid-template-columns: 1fr; max-width: 640px; gap: 12px; }
+html[data-layout=list] .menu-button { flex-direction: row; justify-content: flex-start; min-height: 96px; padding: 14px 28px; gap: 26px; }
+html[data-layout=list] .menu-button span { text-align: left; }
+html[data-layout=list] .menu-button > span:last-child { min-height: 0; display: block; }
+html[data-layout=compact] .menu-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; max-width: 900px; }
+html[data-layout=compact] .menu-button { min-height: 150px; padding: 16px 8px; gap: 12px; }
+html[data-layout=compact] .menu-button span { font-size: 18px; }
+@media (max-width: 700px) { html[data-layout=compact] .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { html[data-layout=compact] .menu-grid { grid-template-columns: 1fr; } html[data-layout=list] .menu-button { padding-inline: 18px; gap: 18px; } }
+/* Panel style */
+html[data-panel=flat] :is(.menu-button, .small-button, .back-button, .copy-button, #audio-toggle, .social-list li, .portrait-frame, .menu-icon-plate) { background: var(--t-bottom, #ecebd6); box-shadow: none; }
+html[data-panel=flat] .settings-window { box-shadow: none; }
+html[data-panel=flat][data-skin=native][data-theme=night] :is(.menu-button, .small-button, .back-button, .copy-button, #audio-toggle, .social-list li, .menu-icon-plate) { background: #344254; }
+html[data-panel=outlined] :is(.menu-button, .small-button, .back-button, .copy-button, #audio-toggle, .social-list li, .portrait-frame, .menu-icon-plate) { background: transparent; box-shadow: none; border-width: 2px; }
+html[data-panel=outlined] .settings-window { box-shadow: none; border-width: 2px; }
+/* Decorations off: no texture, plain thin separators, no drop shadows */
+html[data-decorations=false] main { background: none; }
+html[data-decorations=false] .console-heading { border-bottom: 1px solid var(--line); }
+html[data-decorations=false] :is(.settings-window, .menu-button, .portrait-frame, .social-list li) { box-shadow: none; }
+html[data-decorations=false] .project-information { border-top-style: solid; }
+/* Animation intensity: soft keeps feedback but removes movement */
+html[data-motion=soft] .menu-button:hover { transform: none; }
+html[data-motion=soft] .page { animation: none; }
+html[data-motion=soft] * { transition-duration: 60ms !important; }

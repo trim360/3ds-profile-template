@@ -1,4 +1,5 @@
 import {DEFAULT_CONFIG} from '../../lib/config.mjs';
+import {DEFAULT_CUSTOM,CUSTOM_KEYS,CONTRAST_RULES,contrastRatio,customProblems,normalizeCustom} from '../../lib/theme.mjs';
 const $=id=>document.getElementById(id),site=new URL('../../',import.meta.url),endpoint=new URL('owner-api/',site);
 let csrf='',profile,revision='',published='',tab='profil',restart=false,previewHash='',previewTimer=0,previewReady=false;
 const panes=[['profil','Profil'],['pages','Pages'],['gallery','Galerie'],['links','Réseaux'],['audio','Audio'],['appearance','Apparence et langue'],['backups','Sauvegardes'],['updates','Mises à jour']];
@@ -88,6 +89,17 @@ function media(parent,kind,set){
 function imageRows(parent,items){collection(parent,'Images',items,()=>({src:'',caption:'',credit:''}),(row,item)=>{const src=field(row,'Image (chemin public ou URL)',item.src,value=>item.src=value);media(row,'image',value=>{item.src=value;src.value=value;});field(row,'Légende',item.caption,value=>item.caption=value);field(row,'Crédit de l’image',item.credit,value=>item.credit=value);});}
 function linkRows(parent,items){collection(parent,'Liens',items,()=>({name:'',url:'',icon:'assets/network.svg'}),(row,item)=>{field(row,'Nom',item.name,value=>item.name=value);field(row,'Adresse du lien',item.url,value=>item.url=value);field(row,'Icône (nom inclus ou chemin public)',item.icon,value=>item.icon=value);});}
 function projectRows(parent,items){collection(parent,'Projets',items,()=>({title:'',description:'',url:'',image:''}),(row,item)=>{for(const [key,label]of [['title','Titre'],['description','Description'],['url','Lien'],['image','Image']])field(row,label,item[key],value=>item[key]=value);media(row,'image',value=>{item.image=value;render();});},{onChange:render});}
+const customLabels={primary:'Couleur principale (liens, accent)',secondary:'Couleur secondaire (icônes)',button:'Boutons',background:'Fond de la page',border:'Bordures',selection:'Sélection (survol)',text:'Texte',window:'Fond des panneaux'};
+function customTheme(parent){
+ const box=element('fieldset'),legend=element('legend','Couleurs du thème personnalisé'),report=element('div');report.setAttribute('role','status');report.className='contrast-report';
+ box.append(legend);profile.appearance.custom=normalizeCustom(profile.appearance.custom);
+ function check(){const problems=customProblems(profile.appearance.custom);report.replaceChildren();
+  if(!problems.length)report.append(element('p','Lisibilité vérifiée : tous les contrastes sont suffisants.'));
+  else{report.append(element('p','Lisibilité insuffisante : ce thème ne peut pas être publié tant que ces contrastes ne sont pas corrigés.'));const list=element('ul');for(const problem of problems)list.append(element('li',`${problem.label} : ${problem.ratio}:1 (minimum ${problem.minimum}:1)`));report.append(list);}
+  $('save').disabled=restart||problems.length>0;}
+ for(const key of CUSTOM_KEYS){const input=field(box,customLabels[key],profile.appearance.custom[key],value=>{profile.appearance.custom[key]=value;check();},{type:'color'});input.setAttribute('aria-label',customLabels[key]);}
+ box.append(button('Revenir aux couleurs par défaut',()=>{profile.appearance.custom={...DEFAULT_CUSTOM};changed();render();}),report);parent.append(box);check();
+}
 function uniquePageId(base){const taken=new Set(profile.pages.map(page=>page.id));let id=base,n=2;while(taken.has(id))id=`${base}-${n++}`.slice(0,64);return id;}
 function deletedPagesPanel(parent){
  const box=element('section');box.className='collection';box.append(element('h3','Pages supprimées'));
@@ -139,8 +151,16 @@ function render(){
  }
  if(tab==='appearance'){
   field(panel,'Page d’accueil',profile.homePage,value=>profile.homePage=value,{options:[['accueil','Menu principal'],...['profil','reseaux','audio'].filter(id=>profile.sections[id]!==false).map(id=>[id,{profil:'Profil',reseaux:'Réseaux',audio:'Paramètres'}[id]]),...profile.pages.filter(page=>page.visible!==false).map(page=>[page.id,page.title||page.id])]});
-  field(panel,'Thème initial',profile.appearance.theme,value=>profile.appearance.theme=value,{options:[['classic','3DS classique'],['light','Clair'],['night','Nuit']]});
+  field(panel,'Thème initial',profile.appearance.theme,value=>{profile.appearance.theme=value;profile.appearance.custom=normalizeCustom(profile.appearance.custom);render();},{options:[['classic','3DS classique'],['light','Clair'],['night','Nuit'],['dsi','Style Nintendo DSi'],['eshop','Style eShop'],['network','Bleu Network'],['custom','Thème personnalisé']]});
+  if(profile.appearance.theme==='custom')customTheme(panel);
   field(panel,'Couleur initiale',profile.appearance.accent,value=>profile.appearance.accent=value,{options:[['orange','Orange eShop'],['red','Rouge 3DS'],['blue','Bleu Internet']]});
+  field(panel,'Taille du texte par défaut',profile.appearance.textSize,value=>profile.appearance.textSize=value,{options:[['small','Plus petit'],['normal','Normal'],['large','Plus grand'],['xlarge','Très grand']]});
+  field(panel,'Forme des boutons et des cartes',profile.appearance.shape,value=>profile.appearance.shape=value,{options:[['soft','Arrondie (3DS)'],['square','Carrée'],['round','Très arrondie']]});
+  field(panel,'Espacement des menus',profile.appearance.spacing,value=>profile.appearance.spacing=value,{options:[['compact','Compact'],['normal','Normal'],['roomy','Aéré']]});
+  field(panel,'Disposition du menu',profile.appearance.layout,value=>profile.appearance.layout=value,{options:[['grid','Grille (3 colonnes)'],['list','Liste'],['compact','Grille compacte (4 colonnes)']]});
+  field(panel,'Style des panneaux',profile.appearance.panel,value=>profile.appearance.panel=value,{options:[['raised','En relief'],['flat','Plat'],['outlined','Contour seul']]});
+  field(panel,'Décorations (textures, séparateurs pointillés, ombres)',profile.appearance.decorations!==false,value=>profile.appearance.decorations=value,{type:'checkbox'});
+  field(panel,'Intensité des animations',profile.appearance.motion,value=>profile.appearance.motion=value,{options:[['full','Complète'],['soft','Douce (sans mouvement)']]});
   field(panel,'Animations par défaut',profile.appearance.animations,value=>profile.appearance.animations=value,{type:'checkbox'});
   field(panel,'Lisibilité renforcée par défaut',profile.appearance.readable,value=>profile.appearance.readable=value,{type:'checkbox'});
   field(panel,'Langue initiale',profile.language,value=>profile.language=value,{options:[['auto','Langue du navigateur'],['fr','Français'],['en','English']]});

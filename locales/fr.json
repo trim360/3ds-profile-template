@@ -103,7 +103,16 @@
     "versionUnavailable": "Version indisponible",
     "ownerTitle": "Gestion du profil",
     "ownerHint": "L’édition et les mises à jour sont réservées au propriétaire. En hébergement statique, utilise Easy Setup.",
-    "ownerOpen": "Espace propriétaire"
+    "ownerOpen": "Espace propriétaire",
+    "themeDsi": "Style Nintendo DSi",
+    "themeEshop": "Style eShop",
+    "themeNetwork": "Bleu Network",
+    "themeCustom": "Thème personnalisé du propriétaire",
+    "textSize": "Taille du texte",
+    "textSizeSmall": "Plus petit",
+    "textSizeNormal": "Normal",
+    "textSizeLarge": "Plus grand",
+    "textSizeXLarge": "Très grand"
   },
   "setup": {
     "iconMissing": "Fichier d’icône introuvable. Utilise un fichier existant, un logo intégré ou une adresse HTTP(S) complète.",
